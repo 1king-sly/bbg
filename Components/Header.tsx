@@ -20,6 +20,8 @@ const Header = () => {
             <Link href="/about">About</Link>
             <Link href="/services">Services</Link>
             <Link href="/events">Events</Link>
+            <Link href="/profiles/1">Girls</Link>
+            <Link href="/organizations">Organizations</Link>
             <Link href="/contact">Contact</Link>
           </nav>
         </div>
@@ -28,12 +30,12 @@ const Header = () => {
             {/* Add search functionality if needed */}
           </div>
           <nav className="flex items-center">
-            <Link href="/login" passHref>
+            <Link href="/auth/login" passHref>
               <Button variant="ghost" className="mr-2">
                 Log in
               </Button>
             </Link>
-            <Link href="/register" passHref>
+            <Link href="/auth/signup" passHref>
               <Button>Sign up</Button>
             </Link>
             <ModeToggle />

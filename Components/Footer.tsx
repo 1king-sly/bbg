@@ -5,7 +5,7 @@ import { Heart } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-100 py-8">
+    <footer className="bg-gray-100 py-8 dark:text-black">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
