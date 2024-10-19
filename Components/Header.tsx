@@ -4,8 +4,24 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "./mode-toggle";
 import { Heart } from "lucide-react";
+import { usePathname } from 'next/navigation';
 
 const Header = () => {
+  const pathname = usePathname();
+
+  const isLoggedIn = pathname.startsWith('/dashboard');
+  let dashboardLink = '/dashboard';
+
+  if (pathname.includes('/gal')) {
+    dashboardLink = '/dashboard/gal';
+  } else if (pathname.includes('/partner')) {
+    dashboardLink = '/dashboard/partner';
+  } else if (pathname.includes('/organization')) {
+    dashboardLink = '/dashboard/organization';
+  } else if (pathname.includes('/admin')) {
+    dashboardLink = '/dashboard/admin';
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
@@ -30,14 +46,31 @@ const Header = () => {
             {/* Add search functionality if needed */}
           </div>
           <nav className="flex items-center">
-            <Link href="/auth/login" passHref>
-              <Button variant="ghost" className="mr-2">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/auth/signup" passHref>
-              <Button>Sign up</Button>
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link href={dashboardLink} passHref>
+                  <Button variant="ghost" className="mr-2">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link href="/" passHref>
+                  <Button variant="ghost" className="mr-2">
+                    Logout
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login" passHref>
+                  <Button variant="ghost" className="mr-2">
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/auth/signup" passHref>
+                  <Button>Sign up</Button>
+                </Link>
+              </>
+            )}
             <ModeToggle />
           </nav>
         </div>
