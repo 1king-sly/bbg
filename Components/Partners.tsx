@@ -18,6 +18,7 @@ const partners = [
   { name: "Girl Effect", logo: "/images/girl-effect.jpeg" },
 ];
 
+
 const Partners = () => {
   const [currentPartners, setCurrentPartners] = useState(partners.slice(0, 4));
 
@@ -49,7 +50,6 @@ const Partners = () => {
                 width={120}
                 height={120}
                 objectFit="contain"
-                className='object-contain'
               />
             </div>
           ))}

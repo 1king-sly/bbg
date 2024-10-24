@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const images = [
   "/images/Teenage-girls.jpg",
@@ -17,7 +17,7 @@ const Hero = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % images.length);
-    }, 4000); // Changed to 4000ms to reduce blank screen time
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -25,12 +25,12 @@ const Hero = () => {
     <section className="relative h-[calc(100vh-3.5rem)] overflow-hidden">
       {images.map((src, index) => (
         <Image
-          key={index}
+          key={src}
           src={src}
-          width={1000}
-          height={1000}
           alt={`BabyGal hero image ${index + 1}`}
-          className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+          layout="fill"
+          objectFit="cover"
+          className={`transition-opacity duration-1000 ${
             index === currentImage ? "opacity-100" : "opacity-0"
           }`}
         />

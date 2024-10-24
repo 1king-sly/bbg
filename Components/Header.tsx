@@ -1,41 +1,41 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { Button } from "@/Components/ui/button";
-import { ModeToggle } from "./mode-toggle";
-import { Heart } from "lucide-react";
-import { usePathname } from 'next/navigation';
-
+import { useState } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { ModeToggle } from "./mode-toggle"
+import { Heart } from "lucide-react"
+import { usePathname } from 'next/navigation'
+import { AuthModal } from "./AuthModal"
 
 const Header = () => {
-  const pathname = usePathname();
+  const pathname = usePathname()
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
 
-  const isLoggedIn = pathname.startsWith('/dashboard');
-  let dashboardLink = '/dashboard';
+  const isLoggedIn = pathname.startsWith('/dashboard')
+  let dashboardLink = '/dashboard'
 
   if (pathname.includes('/gal')) {
-    dashboardLink = '/dashboard/gal';
+    dashboardLink = '/dashboard/gal'
   } else if (pathname.includes('/partner')) {
-    dashboardLink = '/dashboard/partner';
+    dashboardLink = '/dashboard/partner'
   } else if (pathname.includes('/organization')) {
-    dashboardLink = '/dashboard/organization';
+    dashboardLink = '/dashboard/organization'
   } else if (pathname.includes('/admin')) {
-    dashboardLink = '/dashboard/admin';
+    dashboardLink = '/dashboard/admin'
   }
-
-  
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="mr-4 hidden md:flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
+        <Link href="/" className="mr-6 flex items-center space-x-2">
             <Heart className="h-6 w-6 text-primary"  />
             <span className="hidden font-bold sm:inline-block text-primary">
               BabyGal
             </span>
           </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium ">
+          <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link href="/about">About</Link>
             <Link href="/services">Services</Link>
             <Link href="/events">Events</Link>
@@ -63,23 +63,17 @@ const Header = () => {
                 </Link>
               </>
             ) : (
-              <>
-                <Link href="/auth/login" passHref>
-                  <Button variant="ghost" className="mr-2">
-                    Log in
-                  </Button>
-                </Link>
-                <Link href="/auth/signup" passHref>
-                  <Button>Sign up</Button>
-                </Link>
-              </>
+              <Button variant="ghost" className="mr-2" onClick={() => setIsAuthModalOpen(true)}>
+                Login / Sign up
+              </Button>
             )}
             <ModeToggle />
           </nav>
         </div>
       </div>
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
