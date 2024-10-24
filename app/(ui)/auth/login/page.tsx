@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import { useToast } from "@/Components/ui/use-toast";
+import { Input } from '@/Components/ui/input';
+import { Button } from '@/Components/ui/button';
+import { useToast } from '@/Components/ui/use-toast';
+
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -17,9 +19,7 @@ export default function LoginPage() {
     // Here you would typically authenticate with your backend
     console.log('Login attempt:', { email, password });
     toast({
-      title: "Login Successful",
-      description: "Welcome back!",
-    });
+      title: "Login Successful"    });
     router.push('/');
   };
 

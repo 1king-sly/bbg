@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
+import { Input } from '@/Components/ui/input';
+import { Button } from '@/Components/ui/button';
 import { useToast } from "@/Components/ui/use-toast";
 
 export default function SignupPage() {
@@ -18,8 +18,7 @@ export default function SignupPage() {
     // Here you would typically register the user with your backend
     console.log('Signup attempt:', { name, email, password });
     toast({
-      title: "Signup Successful",
-      description: "Welcome to BabyGal!",
+      title: "Signup Successful"
     });
     router.push('/');
   };

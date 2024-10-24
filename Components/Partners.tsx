@@ -4,18 +4,18 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 
 const partners = [
-  { name: "UNICEF", logo: "/public/unicef.png" },
-  { name: "WHO", logo: "/public/who.png" },
-  { name: "Save the Children", logo: "/public/save-the-children.png" },
-  { name: "Girl Effect", logo: "/public/girl-effect.jpeg" },
-  { name: "UNICEF", logo: "/public/unicef.png" },
-  { name: "WHO", logo: "/public/who.png" },
-  { name: "Save the Children", logo: "/public/save-the-children.png" },
-  { name: "Girl Effect", logo: "/public/girl-effect.jpeg" },
-  { name: "UNICEF", logo: "/public/unicef.png" },
-  { name: "WHO", logo: "/public/who.png" },
-  { name: "Save the Children", logo: "/public/save-the-children.png" },
-  { name: "Girl Effect", logo: "/public/girl-effect.jpeg" },
+  { name: "UNICEF", logo: "/images/unicef.png" },
+  { name: "WHO", logo: "/images/who.png" },
+  { name: "Save the Children", logo: "/images/save-the-children.png" },
+  { name: "Girl Effect", logo: "/images/girl-effect.jpeg" },
+  { name: "UNICEF", logo: "/images/unicef.png" },
+  { name: "WHO", logo: "/images/who.png" },
+  { name: "Save the Children", logo: "/images/save-the-children.png" },
+  { name: "Girl Effect", logo: "/images/girl-effect.jpeg" },
+  { name: "UNICEF", logo: "/images/unicef.png" },
+  { name: "WHO", logo: "/images/who.png" },
+  { name: "Save the Children", logo: "/images/save-the-children.png" },
+  { name: "Girl Effect", logo: "/images/girl-effect.jpeg" },
 ];
 
 const Partners = () => {

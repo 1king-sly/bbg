@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 import { ModeToggle } from "./mode-toggle";
 import { Heart } from "lucide-react";
 import { usePathname } from 'next/navigation';

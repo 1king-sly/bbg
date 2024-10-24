@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 

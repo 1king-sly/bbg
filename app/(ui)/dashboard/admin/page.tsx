@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { useToast } from "@/Components/ui/use-toast";
@@ -24,8 +24,7 @@ export default function AdminDashboard() {
     // Here you would typically send the announcement to your backend
     console.log('New announcement:', newAnnouncement);
     toast({
-      title: "Announcement Posted",
-      description: "Your announcement has been sent to all users.",
+      title: "Announcement Posted"
     });
     setNewAnnouncement('');
   };

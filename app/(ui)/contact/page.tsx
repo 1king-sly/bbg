@@ -24,7 +24,6 @@ export default function ContactPage() {
     console.log(formData);
     toast({
       title: "Message Sent",
-      description: "We've received your message and will get back to you soon.",
     });
     setFormData({ name: '', email: '', message: '' });
   };

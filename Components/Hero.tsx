@@ -2,20 +2,20 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 
 
 
 
 const images = [
-  "/public/teen-girl.jpeg",
-  "/public/Teenage-girls.jpg",
-  "/public/influencers.jpg",
-  "/public/graduate.webp",
-  "/public/successful-woman.jpeg",
-  "/public/sports.jpeg",
-  "/public/graduates.jpg",
-  "/public/young-girl.jpg",
+  "/images/teen-girl.jpeg",
+  "/images/Teenage-girls.jpg",
+  "/images/influencers.jpg",
+  "/images/graduate.webp",
+  "/images/successful-woman.jpeg",
+  "/images/sports.jpeg",
+  "/images/graduates.jpg",
+  "/images/young-girl.jpg",
 
 ];
 

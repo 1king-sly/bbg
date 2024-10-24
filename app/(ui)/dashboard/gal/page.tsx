@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { useToast } from "@/Components/ui/use-toast";
 
@@ -16,8 +15,7 @@ export default function GalDashboard() {
     // Here you would typically send the journal entry to your backend
     console.log('Journal entry:', journal);
     toast({
-      title: "Journal Entry Saved",
-      description: "Your thoughts have been recorded.",
+      title: "Journal Entry Saved"
     });
     setJournal('');
   };

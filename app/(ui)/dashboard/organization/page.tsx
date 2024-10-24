@@ -17,7 +17,7 @@ export default function OrganizationDashboard() {
     console.log('New resource:', newResource);
     toast({
       title: "Resource Added",
-      description: "Your new resource has been added to the database.",
+     
     });
     setNewResource({ title: '', description: '', link: '' });
   };

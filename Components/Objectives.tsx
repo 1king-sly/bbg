@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target, Heart, BookOpen, Users, Shield } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import {  Heart, BookOpen, Users, Shield } from "lucide-react";
 
 const objectives = [
   {
