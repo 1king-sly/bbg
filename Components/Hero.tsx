@@ -4,19 +4,11 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/Components/ui/button";
 
-
-
-
 const images = [
-  "/images/teen-girl.jpeg",
   "/images/Teenage-girls.jpg",
   "/images/influencers.jpg",
   "/images/graduate.webp",
-  "/images/successful-woman.jpeg",
-  "/images/sports.jpeg",
   "/images/graduates.jpg",
-  "/images/young-girl.jpg",
-
 ];
 
 const Hero = () => {
@@ -25,7 +17,7 @@ const Hero = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % images.length);
-    }, 5000);
+    }, 4000); // Changed to 4000ms to reduce blank screen time
     return () => clearInterval(interval);
   }, []);
 
@@ -38,7 +30,7 @@ const Hero = () => {
           width={1000}
           height={1000}
           alt={`BabyGal hero image ${index + 1}`}
-          className={`transition-opacity duration-1000 object-cover w-full h-full fill  ${
+          className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
             index === currentImage ? "opacity-100" : "opacity-0"
           }`}
         />
