@@ -22,8 +22,8 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would typically authenticate with your backend
-    console.log('Auth attempt:', { email, password, name: isLogin ? undefined : name })
+    
+    
     toast({
       title: isLogin ? "Login Successful" : "Signup Successful",
       description:'You have been successfully authenticated'

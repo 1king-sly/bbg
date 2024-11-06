@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ChatButton from '@/components/ChatButton';
+import { Toaster } from "@/components/ui/toaster"
+
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,6 +32,7 @@ export default function RootLayout({
           <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-grow">{children}</main>
+            <Toaster />
             <Footer />
             <ChatButton />
           </div>
