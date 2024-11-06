@@ -97,8 +97,8 @@ export default function ChatButton() {
   }
 
   return (
-    <Card className={`fixed ${isExpanded ? 'inset-0' : 'bottom-4 right-4 w-80 h-96'} transition-all duration-300`}>
-      <div className="flex items-center justify-between p-4 border-b">
+    <Card className={`fixed ${isExpanded ? 'inset-0 pt-16 pb-10' : 'bottom-4 right-4 w-80 h-96 pb-6 '} transition-all duration-300 `}>
+      <div className="flex items-center justify-between border-b">
         <h3 className="font-semibold">Chat Support</h3>
         <div className="flex gap-2">
           <Button
