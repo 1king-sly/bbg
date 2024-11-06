@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ChatButton from '@/components/ChatButton';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
             <Header />
             <main className="flex-grow">{children}</main>
             <Footer />
+            <ChatButton />
           </div>
         </ThemeProvider>
       </body>
