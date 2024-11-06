@@ -67,7 +67,7 @@ export default function GirlProfile({ params }: { params: { id: string } }) {
   );
 }
 
-// Function to predefine the available profile IDs for static generation
+
 export function generateStaticParams() {
   return girlProfiles.map((profile) => ({
     id: profile.id.toString(),

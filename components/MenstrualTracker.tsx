@@ -19,7 +19,7 @@ export default function MenstrualTracker({ userId }: MenstrualTrackerProps) {
 
   useEffect(() => {
     fetchCycleData();
-  }, [userId]);
+  });
 
   const fetchCycleData = async () => {
     try {

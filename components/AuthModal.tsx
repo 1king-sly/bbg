@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/hooks/use-toast";
 
 export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [isLogin, setIsLogin] = useState(true)
@@ -26,6 +26,7 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
     console.log('Auth attempt:', { email, password, name: isLogin ? undefined : name })
     toast({
       title: isLogin ? "Login Successful" : "Signup Successful",
+      description:'You have been successfully authenticated'
       
     })
     onClose()
