@@ -16,7 +16,7 @@ export default function PartnerDashboard() {
     console.log('New event:', newEvent);
     toast({
       title: "Event Created",
-     
+      description: "Your new event has been added to the calendar.",
     });
     setNewEvent({ title: '', date: '', description: '' });
   };

@@ -25,7 +25,7 @@ export default function AdminDashboard() {
     console.log('New announcement:', newAnnouncement);
     toast({
       title: "Announcement Posted",
-     
+      description: "Your announcement has been sent to all users.",
     });
     setNewAnnouncement('');
   };

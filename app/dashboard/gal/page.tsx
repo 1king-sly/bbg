@@ -17,7 +17,7 @@ export default function GalDashboard() {
     console.log('Journal entry:', journal);
     toast({
       title: "Journal Entry Saved",
-     
+      description: "Your thoughts have been recorded.",
     });
     setJournal('');
   };
