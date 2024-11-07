@@ -20,16 +20,68 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
   const [name, setName] = useState('')
   const { toast } = useToast()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+
+  const handleSubmit =async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    
+
+    try{
+
+      const formData = {
+        name: name,
+        email: email,
+        password: password,
+      };
+      const url = `${API_URL}/${isLogin ? "auth/token" : "users"}`;
+  
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+  
+      if (response.ok) {
+        console.log(isLogin ? "Login successful" : "Sign up successful");
+        const data = await response.json();
+        if (isLogin) {
+          localStorage.setItem("accessToken", data.access_token);
+        }
+
+        toast({
+          title: isLogin ? "Login Successful" : "Signup Successful",
+          description:'You have been successfully  authenticated',
+          
+        })
+    }
+
     toast({
-      title: isLogin ? "Login Successful" : "Signup Successful",
-      description:'You have been successfully authenticated'
+      title: isLogin ? "Login failed" : "Signup Failed",
+      description:'You have not been  authenticated',
+      variant:'destructive'
       
     })
+
     onClose()
+
+
+  }catch(error:any){
+      console.error('An error occured', error)
+
+      toast({
+        title: isLogin ? "Login failed" : "Signup Failed",
+        description:'You have not been  authenticated',
+        variant:'destructive'
+        
+      })
+
+              onClose()
+
+
+    }
+    
+    
+    
   }
 
   return (
