@@ -55,7 +55,7 @@ export default function ExpertCourses() {
     title: "",
     description: "",
     category: "",
-    modules: [] as { title: string }[]
+    modules: [] as { id: number; title: string; completed: boolean }[]
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -105,18 +105,29 @@ export default function ExpertCourses() {
   const handleAddModule = () => {
     setCourseForm({
       ...courseForm,
-      modules: [...courseForm.modules, { title: "" }]
+      modules: [
+        ...courseForm.modules,
+        { id: courseForm.modules.length + 1, title: "", completed: false }
+      ]
     });
   };
 
   const handleModuleChange = (index: number, value: string) => {
     const updatedModules = [...courseForm.modules];
-    updatedModules[index] = { title: value };
+    
+    updatedModules[index] = {
+      ...updatedModules[index], 
+      title: value,
+      id: updatedModules[index]?.id ?? index + 1, 
+      completed: updatedModules[index]?.completed ?? false 
+    };
+  
     setCourseForm({
       ...courseForm,
       modules: updatedModules
     });
   };
+  
 
   const handleRemoveModule = (index: number) => {
     const updatedModules = courseForm.modules.filter((_, i) => i !== index);

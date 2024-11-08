@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import {
   Table,
   TableBody,
@@ -22,6 +22,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash, Search } from "lucide-react";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  isPregnant: boolean;
+  pregnancyDate: string | undefined | null;
+  hasChild: boolean;
+  lastPeriodDate: string | undefined | null;
+  createdAt: string;
+  childBirthDate: string | undefined | null;
+  childGender: string | undefined | null;
+}
 
 const dummyUsers = [
   {
@@ -52,7 +68,7 @@ const dummyUsers = [
 
 export default function AdminUsers() {
   const { toast } = useToast();
-  const [users, setUsers] = useState(dummyUsers);
+  const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
@@ -68,33 +84,151 @@ export default function AdminUsers() {
     lastPeriodDate: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(()=>{
+    const fetchExperts=async()=>{      
+      try{
+        const response = await fetch(`${API_URL}/users`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+           
+          }
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+
+          setUsers(data);
+        }
+      }catch(error){
+        console.error('Failed to fetch Users',error)
+      }
+    }
+    fetchExperts();
+  },[])
+
+  const handleSubmit =async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const access_token = localStorage.getItem("accessToken");
+
     
     if (editingUser) {
       // Update existing user
-      const updatedUsers = users.map(user => 
-        user.id === editingUser.id 
-          ? { ...user, ...userForm }
-          : user
-      );
-      setUsers(updatedUsers);
-      toast({
-        title: "User Updated",
-        description: "The user has been successfully updated.",
-      });
+      try{
+
+        const response = await fetch(`${API_URL}/users/${editingUser.id}`, {
+           method: "PUT",
+           headers: {
+             "Content-Type": "application/json",
+             Authorization: `Bearer ${access_token}`,
+           },
+           body: JSON.stringify(userForm),
+         });
+ 
+ 
+         if (response.ok) {
+          const updatedUser = await response.json();
+
+          setUsers((prevUsers) =>
+              prevUsers.map((user) =>
+                user.id === editingUser.id ? updatedUser : user
+              )
+          );
+
+          toast({
+            title: "User Updated",
+            description: "The user has been successfully updated.",
+        });
+
+        setIsDialogOpen(false);
+        setEditingUser(null);
+        setUserForm({
+          name: "",
+          email: "",
+          role: "USER",
+          isPregnant: false,
+          pregnancyDate: "",
+          hasChild: false,
+          childBirthDate: "",
+          childGender: "",
+          lastPeriodDate: "",
+        });
+         }else{
+           toast({
+             title: "Action Failed",
+             description: "Failed to create  partner",
+             variant: "destructive",
+           });
+         }
+ 
+     }catch(error:any){
+        console.error(error);
+ 
+         toast({
+           title: "Action Failed",
+           description: "Failed to create  partner",
+           variant: "destructive",
+         });
+     }
     } else {
       // Create new user
-      const newUser = {
-        id: users.length + 1,
-        ...userForm,
-        createdAt: new Date().toISOString().split('T')[0],
-      };
-      setUsers([...users, newUser]);
-      toast({
-        title: "User Created",
-        description: "The new user has been created successfully.",
-      });
+      try {     
+        
+        const response = await fetch(`${API_URL}/users`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+          body: JSON.stringify(userForm),
+        });
+
+        const data = await response.json();
+
+
+        if (response.ok) {
+
+          setUsers(data);
+          toast({
+            title: "Action Successful",
+            description: "Partner Successfully created",
+          });
+
+          
+
+          setIsDialogOpen(false);
+          setEditingUser(null);
+          setUserForm({
+            name: "",
+            email: "",
+            role: "USER",
+            isPregnant: false,
+            pregnancyDate: "",
+            hasChild: false,
+            childBirthDate: "",
+            childGender: "",
+            lastPeriodDate: "",
+          });
+        
+        }else{
+          toast({
+            title: "Action Failed",
+            description: "Failed to create  partner",
+            variant: "destructive",
+          });
+        }
+
+       
+      } catch (error: any) {
+        console.error(error);
+
+        toast({
+          title: "Action Failed",
+          description: "Failed to create  partner",
+          variant: "destructive",
+        });
+      } 
     }
     
     setIsDialogOpen(false);
@@ -128,12 +262,45 @@ export default function AdminUsers() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (userId: number) => {
+  const handleDelete = async(userId: number) => {
+    const access_token = localStorage.getItem("accessToken");
+
+
+    try{
+
+       const response = await fetch(`${API_URL}/users/${userId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+
+
+        if (response.ok) {
+         toast({
+           title: "User Deleted",
+           description: "The user has been successfully deleted.",
+       });
+        }else{
+          toast({
+            title: "Action Failed",
+            description: "Failed to delete user",
+            variant: "destructive",
+          });
+        }
+
+    }catch(error:any){
+       console.error(error);
+
+        toast({
+          title: "Action Failed",
+          description: "Failed to create  partner",
+          variant: "destructive",
+        });
+    }
     setUsers(users.filter(user => user.id !== userId));
-    toast({
-      title: "User Deleted",
-      description: "The user has been successfully deleted.",
-    });
+   
   };
 
   const filteredUsers = users.filter(user =>
