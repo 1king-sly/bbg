@@ -42,8 +42,9 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
       });
   
       if (response.ok) {
-        console.log(isLogin ? "Login successful" : "Sign up successful");
+        
         const data = await response.json();
+
         if (isLogin) {
           localStorage.setItem("accessToken", data.access_token);
         }
@@ -55,12 +56,16 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
         })
     }
 
-    toast({
-      title: isLogin ? "Login failed" : "Signup Failed",
-      description:'You have not been  authenticated',
-      variant:'destructive'
-      
-    })
+    if(!response.ok){
+      toast({
+        title: isLogin ? "Login failed" : "Signup Failed",
+        description:'You have not been  authenticated',
+        variant:'destructive'
+        
+      })
+    }
+
+    
 
     onClose()
 

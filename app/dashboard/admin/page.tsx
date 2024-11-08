@@ -2,83 +2,63 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-const data = [
-  { name: 'Jan', users: 400 },
-  { name: 'Feb', users: 300 },
-  { name: 'Mar', users: 200 },
-  { name: 'Apr', users: 278 },
-  { name: 'May', users: 189 },
-];
+import { Users, BookOpen, Calendar, Building2 } from "lucide-react";
+import AdminOverview from "@/components/dashboard/admin/AdminOverview";
+import AdminUsers from "@/components/dashboard/admin/AdminUsers";
+import AdminExperts from "@/components/dashboard/admin/AdminExperts";
+import AdminPartners from "@/components/dashboard/admin/AdminPartners";
+import AdminOrganizations from "@/components/dashboard/admin/AdminOrganizations";
+// import AdminEvents from "@/components/dashboard/admin/AdminEvents";
+// import AdminCourses from "@/components/dashboard/admin/AdminCourses";
 
 export default function AdminDashboard() {
-  const { toast } = useToast();
-  const [newAnnouncement, setNewAnnouncement] = useState('');
-
-  const handleAnnouncementSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you would typically send the announcement to your backend
-    console.log('New announcement:', newAnnouncement);
-    toast({
-      title: "Announcement Posted",
-      description: "Your announcement has been sent to all users.",
-    });
-    setNewAnnouncement('');
-  };
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <div className="container mx-auto py-12">
-      <h1 className="text-4xl font-bold mb-8">Admin Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>User Growth</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="users" fill="#8884d8" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Post Announcement</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleAnnouncementSubmit}>
-              <Input
-                placeholder="Write your announcement here..."
-                value={newAnnouncement}
-                onChange={(e) => setNewAnnouncement(e.target.value)}
-                className="mb-2"
-              />
-              <Button type="submit">Post Announcement</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Quick Stats</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>Total Users: 1,367</p>
-          <p>Active Partners: 25</p>
-          <p>Resources Shared: 150</p>
-          <p>Upcoming Events: 10</p>
-        </CardContent>
-      </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-7 mb-8">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="experts">Experts</TabsTrigger>
+          <TabsTrigger value="partners">Partners</TabsTrigger>
+          <TabsTrigger value="organizations">Organizations</TabsTrigger>
+          <TabsTrigger value="events">Events</TabsTrigger>
+          <TabsTrigger value="courses">Courses</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <AdminOverview />
+        </TabsContent>
+
+        <TabsContent value="users">
+          <AdminUsers />
+        </TabsContent>
+
+        <TabsContent value="experts">
+          <AdminExperts />
+        </TabsContent>
+
+        <TabsContent value="partners">
+          <AdminPartners />
+        </TabsContent>
+
+        <TabsContent value="organizations">
+          <AdminOrganizations />
+        </TabsContent>
+
+        {/* <TabsContent value="events">
+          <AdminEvents />
+        </TabsContent> */}
+
+        {/* <TabsContent value="courses">
+          <AdminCourses />
+        </TabsContent> */}
+      </Tabs>
     </div>
   );
 }

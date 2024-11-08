@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState,useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,30 +16,24 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-const dummyEvents = [
-  {
-    id: 1,
-    title: "Teen Mental Health Workshop",
-    description: "Interactive workshop focusing on teen mental health awareness and coping strategies.",
-    date: "2024-03-20",
-    location: "Online",
-    attendees: 25,
-    maxAttendees: 30
-  },
-  {
-    id: 2,
-    title: "Parenting Skills Seminar",
-    description: "Learn effective parenting techniques for managing teenage behavior.",
-    date: "2024-03-25",
-    location: "Community Center",
-    attendees: 15,
-    maxAttendees: 20
-  }
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+interface Event {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  attendees: number;
+  maxAttendees: number;
+}
+
+
+
 
 export default function ExpertEvents() {
   const { toast } = useToast();
-  const [events, setEvents] = useState(dummyEvents);
+  const [events, setEvents] = useState<Event[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<any>(null);
   const [eventForm, setEventForm] = useState({
@@ -47,50 +41,124 @@ export default function ExpertEvents() {
     description: "",
     date: "",
     location: "",
-    maxAttendees: ""
+    maxAttendees: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (editingEvent) {
-      // Update existing event
-      const updatedEvents = events.map(event => 
-        event.id === editingEvent.id 
-          ? { ...event, ...eventForm, maxAttendees: parseInt(eventForm.maxAttendees) } 
-          : event
-      );
-      setEvents(updatedEvents);
-      toast({
-        title: "Event Updated",
-        description: "The event has been successfully updated.",
-      });
-    } else {
-      // Create new event
-      const newEvent = {
-        id: events.length + 1,
-        ...eventForm,
-        attendees: 0,
-        maxAttendees: parseInt(eventForm.maxAttendees)
-      };
-      setEvents([...events, newEvent]);
-      toast({
-        title: "Event Created",
-        description: "Your new event has been created successfully.",
-      });
+  useEffect(()=>{
+    const fetchEvents=async()=>{
+
+      const access_token = localStorage.getItem("accessToken");
+      
+      try{
+        const response = await fetch(`${API_URL}/events/me`, {
+          method: "GET",
+          mode:'no-cors',
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          }
+        });
+
+        const data = await response.json();
+
+
+        if (response.ok) {
+         
+          setEvents(data);
+        }
+
+      }catch(error){
+        console.error('Failed to fetch Events',error)
+      }
     }
-    
-    setIsDialogOpen(false);
-    setEditingEvent(null);
-    setEventForm({
-      title: "",
-      description: "",
-      date: "",
-      location: "",
-      maxAttendees: ""
-    });
-  };
-  
+    fetchEvents();
+  },[])
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const access_token = localStorage.getItem("accessToken");
+
+
+    // if (editingEvent) {
+    //   // Update existing event
+    //   const updatedEvents = events.map((event):{event:any}) =>{
+    //     {
+    //     event.id === editingEvent.id
+    //       ? {
+    //           ...event,
+    //           ...eventForm,
+    //           maxAttendees: parseInt(eventForm.maxAttendees),
+    //         }
+    //       : event
+    //   );
+    //   setEvents(updatedEvents);
+    //   toast({
+    //     title: "Event Updated",
+    //     description: "The event has been successfully updated.",
+    //   });
+    // } else {
+    //   // Create new event
+     
+
+      try {
+
+        const newEvent = {
+          id: events.length + 1,
+          ...eventForm,
+          attendees: 0,
+          maxAttendees: parseInt(eventForm.maxAttendees),
+        }
+        const response = await fetch(`${API_URL}/events`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+          body: JSON.stringify(newEvent),
+        });
+
+        const data = await response.json();
+
+        console.log(data)
+
+        if (response.ok) {
+          toast({
+            title: "Action Successful",
+            description: "Event Successfully created",
+          });
+          setIsDialogOpen(false);
+          setEditingEvent(null);
+          setEventForm({
+            title: "",
+            description: "",
+            date: "",
+            location: "",
+            maxAttendees: "",
+          });
+        }
+
+        if(!response.ok){
+          toast({
+            title: "Action Failed",
+            description: "Failed to create  event",
+            variant: "destructive",
+          });
+        }
+
+       
+      } catch (error: any) {
+        console.error(error);
+
+        toast({
+          title: "Action Failed",
+          description: "Failed to create  event",
+          variant: "destructive",
+        });
+      }    
+    }
 
   const handleEdit = (event: any) => {
     setEditingEvent(event);
@@ -99,13 +167,13 @@ export default function ExpertEvents() {
       description: event.description,
       date: event.date,
       location: event.location,
-      maxAttendees: event.maxAttendees.toString()
+      maxAttendees: event.maxAttendees.toString(),
     });
     setIsDialogOpen(true);
   };
 
   const handleDelete = (eventId: number) => {
-    setEvents(events.filter(event => event.id !== eventId));
+    setEvents(events.filter((event) => event.id !== eventId));
     toast({
       title: "Event Deleted",
       description: "The event has been successfully deleted.",
@@ -118,23 +186,26 @@ export default function ExpertEvents() {
         <h2 className="text-2xl font-bold">Your Events</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => {
-              setEditingEvent(null);
-              setEventForm({
-                title: "",
-                description: "",
-                date: "",
-                location: "",
-                maxAttendees: ""
-              });
-            }}>
+            <Button
+              onClick={() => {
+                setEditingEvent(null);
+                setEventForm({
+                  title: "",
+                  description: "",
+                  date: "",
+                  location: "",
+                  maxAttendees: "",
+                });
+              }}>
               <Plus className="h-4 w-4 mr-2" />
               Create Event
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingEvent ? "Edit Event" : "Create New Event"}</DialogTitle>
+              <DialogTitle>
+                {editingEvent ? "Edit Event" : "Create New Event"}
+              </DialogTitle>
               <DialogDescription>
                 Fill in the details for your event below.
               </DialogDescription>
@@ -144,7 +215,9 @@ export default function ExpertEvents() {
                 <label className="text-sm font-medium">Title</label>
                 <Input
                   value={eventForm.title}
-                  onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
+                  onChange={(e) =>
+                    setEventForm({ ...eventForm, title: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -152,7 +225,9 @@ export default function ExpertEvents() {
                 <label className="text-sm font-medium">Description</label>
                 <Textarea
                   value={eventForm.description}
-                  onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
+                  onChange={(e) =>
+                    setEventForm({ ...eventForm, description: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -161,7 +236,9 @@ export default function ExpertEvents() {
                 <Input
                   type="date"
                   value={eventForm.date}
-                  onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
+                  onChange={(e) =>
+                    setEventForm({ ...eventForm, date: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -169,7 +246,9 @@ export default function ExpertEvents() {
                 <label className="text-sm font-medium">Location</label>
                 <Input
                   value={eventForm.location}
-                  onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })}
+                  onChange={(e) =>
+                    setEventForm({ ...eventForm, location: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -178,11 +257,15 @@ export default function ExpertEvents() {
                 <Input
                   type="number"
                   value={eventForm.maxAttendees}
-                  onChange={(e) => setEventForm({ ...eventForm, maxAttendees: e.target.value })}
+                  onChange={(e) =>
+                    setEventForm({ ...eventForm, maxAttendees: e.target.value })
+                  }
                   required
                 />
               </div>
-              <Button type="submit">{editingEvent ? "Update Event" : "Create Event"}</Button>
+              <Button type="submit">
+                {editingEvent ? "Update Event" : "Create Event"}
+              </Button>
             </form>
           </DialogContent>
         </Dialog>
@@ -195,10 +278,16 @@ export default function ExpertEvents() {
               <CardTitle className="flex justify-between items-start">
                 <span>{event.title}</span>
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" onClick={() => handleEdit(event)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleEdit(event)}>
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDelete(event.id)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(event.id)}>
                     <Trash className="h-4 w-4" />
                   </Button>
                 </div>
