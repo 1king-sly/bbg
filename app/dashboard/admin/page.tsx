@@ -12,8 +12,8 @@ import AdminUsers from "@/components/dashboard/admin/AdminUsers";
 import AdminExperts from "@/components/dashboard/admin/AdminExperts";
 import AdminPartners from "@/components/dashboard/admin/AdminPartners";
 import AdminOrganizations from "@/components/dashboard/admin/AdminOrganizations";
-// import AdminEvents from "@/components/dashboard/admin/AdminEvents";
-// import AdminCourses from "@/components/dashboard/admin/AdminCourses";
+import AdminEvents from "@/components/dashboard/admin/AdminEvents";
+import AdminCourses from "@/components/dashboard/admin/AdminCourses";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -51,13 +51,13 @@ export default function AdminDashboard() {
           <AdminOrganizations />
         </TabsContent>
 
-        {/* <TabsContent value="events">
+        <TabsContent value="events">
           <AdminEvents />
-        </TabsContent> */}
+        </TabsContent>
 
-        {/* <TabsContent value="courses">
+        <TabsContent value="courses">
           <AdminCourses />
-        </TabsContent> */}
+        </TabsContent>
       </Tabs>
     </div>
   );
