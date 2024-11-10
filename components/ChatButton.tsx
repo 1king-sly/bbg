@@ -9,38 +9,45 @@ import { MessageCircle, X, Maximize2, Minimize2, Clock, Check } from 'lucide-rea
 interface Message {
   id: string;
   content: string;
-  sender: 'user' | 'other';
+  sender: 'user' | 'bot';
   status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
   timestamp: Date;
 }
 
+const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL
+
 export default function ChatButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState({
+    message:''
+  });
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       content: 'Hello! How can I help you today?',
-      sender: 'other',
+      sender: 'bot',
       status: 'read',
       timestamp: new Date()
     }
   ]);
 
-  const handleSend = () => {
-    if (!message.trim()) return;
+  // Function to handle sending user messages and receiving bot responses
+  const handleSend = async () => {
+    if (!message.message.trim()) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
-      content: message,
+      content: message.message,
       sender: 'user',
       status: 'pending',
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, newMessage]);
-    setMessage('');
+    setMessage({
+      message:''
+    });
 
     // Simulate message status changes
     setTimeout(() => {
@@ -51,13 +58,24 @@ export default function ChatButton() {
       );
     }, 1000);
 
-    setTimeout(() => {
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === newMessage.id ? { ...msg, status: 'delivered' } : msg
-        )
-      );
-    }, 2000);
+
+    // Fetch AI response from OpenAI API
+    const botResponse = await fetch(`${NEXT_PUBLIC_API_URL}/chat/`,{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify(message)
+    });
+
+    const response = await botResponse.json()
+    const botMessage: Message = {
+      id: Date.now().toString(),
+      content: response.response,
+      sender: 'bot',
+      status: 'read',
+      timestamp: new Date()
+    };
 
     setTimeout(() => {
       setMessages(prev => 
@@ -97,7 +115,7 @@ export default function ChatButton() {
   }
 
   return (
-    <Card className={`fixed ${isExpanded ? 'inset-0 pt-16 pb-10' : 'bottom-4 right-4 w-80 h-96 pb-6 '} transition-all duration-300 `}>
+    <Card className={`fixed ${isExpanded ? 'inset-0 pt-16 pb-10' : 'bottom-4 right-4 w-96 h-96 pb-6'} transition-all duration-300`}>
       <div className="flex items-center justify-between border-b">
         <h3 className="font-semibold">Chat Support</h3>
         <div className="flex gap-2">
@@ -123,7 +141,7 @@ export default function ChatButton() {
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex text-sm ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
                 className={`max-w-[80%] rounded-lg p-3 ${
@@ -155,8 +173,8 @@ export default function ChatButton() {
             className="flex gap-2"
           >
             <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={message.message}
+              onChange={(e) => setMessage({message:e.target.value})}
               placeholder="Type a message..."
               className="flex-1"
             />
