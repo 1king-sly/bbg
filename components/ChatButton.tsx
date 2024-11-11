@@ -69,6 +69,8 @@ export default function ChatButton() {
     });
 
     const response = await botResponse.json()
+
+    console.log(response)
     const botMessage: Message = {
       id: Date.now().toString(),
       content: response.response,
@@ -77,13 +79,7 @@ export default function ChatButton() {
       timestamp: new Date()
     };
 
-    setTimeout(() => {
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === newMessage.id ? { ...msg, status: 'read' } : msg
-        )
-      );
-    }, 3000);
+    setMessages((prev) => [...prev, botMessage]);
   };
 
   const getStatusIcon = (status: string) => {

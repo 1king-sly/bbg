@@ -2,68 +2,132 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Calendar, Users, BookOpen, Video } from "lucide-react";
+import PartnerCourses from '@/components/dashboard/partner/PartnerCourses';
+import PartnerEvents from '@/components/dashboard/partner/PartnerEvents';
+import PartnerProfile from '@/components/dashboard/partner/PartnerProfile';
+import PartnerSessions from '@/components/dashboard/partner/PartnerSessions';
 
-export default function PartnerDashboard() {
+
+const sessionData = [
+  { month: 'Jan', sessions: 4 },
+  { month: 'Feb', sessions: 6 },
+  { month: 'Mar', sessions: 8 },
+  { month: 'Apr', sessions: 12 },
+  { month: 'May', sessions: 15 },
+];
+
+export default function ExpertDashboard() {
   const { toast } = useToast();
-  const [newEvent, setNewEvent] = useState({ title: '', date: '', description: '' });
-
-  const handleEventSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Here you would typically send the new event to your backend
-    console.log('New event:', newEvent);
-    toast({
-      title: "Event Created",
-      description: "Your new event has been added to the calendar.",
-    });
-    setNewEvent({ title: '', date: '', description: '' });
-  };
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <div className="container mx-auto py-12">
-      <h1 className="text-4xl font-bold mb-8">Partner Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Partnership Stats</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Girls supported: 50</p>
-            <p>Events hosted: 5</p>
-            <p>Resources provided: 100</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Create New Event</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleEventSubmit}>
-              <Input
-                placeholder="Event Title"
-                value={newEvent.title}
-                onChange={(e) => setNewEvent({...newEvent, title: e.target.value})}
-                className="mb-2"
-              />
-              <Input
-                type="date"
-                value={newEvent.date}
-                onChange={(e) => setNewEvent({...newEvent, date: e.target.value})}
-                className="mb-2"
-              />
-              <Input
-                placeholder="Event Description"
-                value={newEvent.description}
-                onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
-                className="mb-2"
-              />
-              <Button type="submit">Create Event</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="events">Events</TabsTrigger>
+          <TabsTrigger value="courses">Courses</TabsTrigger>
+          <TabsTrigger value="sessions">Sessions</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Events Created
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">12</p>
+                <p className="text-sm text-muted-foreground">+2 this month</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Total Attendees
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">245</p>
+                <p className="text-sm text-muted-foreground">+45 this month</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5" />
+                  Active Courses
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">5</p>
+                <p className="text-sm text-muted-foreground">+1 this month</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Video className="h-5 w-5" />
+                  Sessions Held
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-bold">48</p>
+                <p className="text-sm text-muted-foreground">+8 this month</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Session Statistics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={sessionData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="sessions" fill="#8884d8" name="Total Sessions" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="profile">
+          <PartnerProfile />
+        </TabsContent>
+
+        <TabsContent value="events">
+          <PartnerEvents />
+        </TabsContent>
+
+        <TabsContent value="courses">
+          <PartnerCourses />
+        </TabsContent>
+
+        <TabsContent value="sessions">
+          <PartnerSessions />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
