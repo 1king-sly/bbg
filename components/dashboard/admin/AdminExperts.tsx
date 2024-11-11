@@ -248,6 +248,8 @@ export default function AdminExperts() {
             title: "Expert Deleted",
             description: "The expert has been successfully deleted.",
         });
+            setExperts(experts.filter(expert => expert.id !== expertId));
+
          }else{
            toast({
              title: "Action Failed",
@@ -261,11 +263,10 @@ export default function AdminExperts() {
  
          toast({
            title: "Action Failed",
-           description: "Failed to create  expert",
+           description: "Failed to delete  expert",
            variant: "destructive",
          });
      }
-    setExperts(experts.filter(expert => expert.id !== expertId));
     
   };
 

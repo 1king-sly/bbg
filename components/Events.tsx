@@ -1,52 +1,119 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, MapPin } from "lucide-react";
+import { Calendar, MapPin,Users } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const events = [
-  {
-    title: "Girls in Tech Workshop",
-    date: "2023-07-15",
-    county: "Nairobi",
-    description: "Learn coding and tech skills in this hands-on workshop.",
-  },
-  {
-    title: "Reproductive Health Seminar",
-    date: "2023-07-22",
-    county: "Mombasa",
-    description: "Expert-led seminar on women's reproductive health and rights.",
-  },
-  {
-    title: "Career Mentorship Day",
-    date: "2023-08-05",
-    county: "Kisumu",
-    description: "Connect with successful women in various career fields.",
-  },
-  {
-    title: "Teen Mothers Support Group",
-    date: "2023-08-12",
-    county: "Nakuru",
-    description: "Share experiences and get support from fellow teen mothers.",
-  },
-];
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+interface Event {
+  id:number,
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  attendees: number;
+  maxAttendees: number;
+}
+
 
 const Events = () => {
-  const [filteredEvents, setFilteredEvents] = useState(events);
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [dateFilter, setDateFilter] = useState("");
   const [countyFilter, setCountyFilter] = useState("");
 
+    const { toast } = useToast();
+
+
   const handleFilter = () => {
-    const filtered = events.filter((event) => {
+    const filtered = filteredEvents.filter((event) => {
       const dateMatch = dateFilter ? event.date >= dateFilter : true;
-      const countyMatch = countyFilter ? event.county === countyFilter : true;
+      const countyMatch = countyFilter ? event.location === countyFilter : true;
       return dateMatch && countyMatch;
     });
     setFilteredEvents(filtered);
   };
+
+  useEffect(()=>{
+    const fetchEvents=async()=>{
+
+      const access_token = localStorage.getItem("accessToken");
+      
+      try{
+        const response = await fetch(`${API_URL}/events/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          }
+        });
+
+        const data = await response.json();
+
+
+        if (response.ok) {
+         
+          setFilteredEvents(data);
+        }
+
+      }catch(error){
+        console.error('Failed to fetch Events',error)
+      }
+    }
+    fetchEvents();
+  },[])
+
+  const rsvp = async(id:number)=>{
+          const access_token = localStorage.getItem("accessToken");
+
+      try{
+
+          const response = await fetch(`${API_URL}/events/${id}/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+
+
+
+
+
+
+        if (response.ok) {
+          toast({
+            title: "Action Successful",
+            description: "Successfully rsvp for event",
+          });
+         
+        }
+
+        if(!response.ok){
+          toast({
+            title: "Action Failed",
+            description: "Failed to rsvp for event",
+            variant: "destructive",
+          });
+        }
+
+      }catch(error:any){
+        console.error("An error occurred",error)
+         toast({
+          title: "Action Failed",
+          description: "Something went wrong",
+          variant: "destructive",
+        });
+      }
+
+
+
+  }
 
   return (
     <section className="py-16">
@@ -87,8 +154,16 @@ const Events = () => {
                 </div>
                 <div className="flex items-center text-sm text-gray-500">
                   <MapPin className="h-4 w-4 mr-2" />
-                  {event.county}
+                  {event.location}
                 </div>
+                <div className="flex items-center">
+                  <Users className="h-4 w-4 mr-2" />
+                  {event.attendees|| 0}/{event.maxAttendees} Attendees
+                </div>
+                <Button type="submit" onClick={()=>rsvp(event.id)}>
+                  RSVP
+                </Button>      
+                
               </CardContent>
             </Card>
           ))}

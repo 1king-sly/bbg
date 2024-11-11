@@ -52,7 +52,6 @@ export default function ExpertEvents() {
       try{
         const response = await fetch(`${API_URL}/events/me`, {
           method: "GET",
-          mode:'no-cors',
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
@@ -80,28 +79,7 @@ export default function ExpertEvents() {
     e.preventDefault();
 
     const access_token = localStorage.getItem("accessToken");
-
-
-    // if (editingEvent) {
-    //   // Update existing event
-    //   const updatedEvents = events.map((event):{event:any}) =>{
-    //     {
-    //     event.id === editingEvent.id
-    //       ? {
-    //           ...event,
-    //           ...eventForm,
-    //           maxAttendees: parseInt(eventForm.maxAttendees),
-    //         }
-    //       : event
-    //   );
-    //   setEvents(updatedEvents);
-    //   toast({
-    //     title: "Event Updated",
-    //     description: "The event has been successfully updated.",
-    //   });
-    // } else {
-    //   // Create new event
-     
+  
 
       try {
 
@@ -120,9 +98,7 @@ export default function ExpertEvents() {
           body: JSON.stringify(newEvent),
         });
 
-        const data = await response.json();
 
-        console.log(data)
 
         if (response.ok) {
           toast({
@@ -306,7 +282,7 @@ export default function ExpertEvents() {
                 </div>
                 <div className="flex items-center">
                   <Users className="h-4 w-4 mr-2" />
-                  {event.attendees}/{event.maxAttendees} Attendees
+                  {event.attendees || 0}/{event.maxAttendees} Attendees
                 </div>
               </div>
             </CardContent>

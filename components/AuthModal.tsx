@@ -40,10 +40,14 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
+      console.log(response)
+
   
       if (response.ok) {
         
         const data = await response.json();
+
 
         if (isLogin) {
           localStorage.setItem("accessToken", data.access_token);
