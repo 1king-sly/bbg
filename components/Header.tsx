@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState ,useEffect} from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./mode-toggle"
@@ -17,11 +17,18 @@ const Header = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [session,setSession] =useState(false)
 
-  // const access_token = localStorage.getItem("accessToken");
+  useEffect(() => {
+    const access_token = localStorage.getItem("accessToken");
+    if (access_token) {
+      setSession(true);
+    }
+  }, []);
 
-  // if(access_token !== null && access_token !== ""){
-  //   setSession(true)
-  // }
+  const clearSession =()=>{
+    localStorage.removeItem("accessToken");
+    window.location.href = "/login";
+
+  }
 
   const isLoggedIn = pathname.startsWith('/dashboard')
   let dashboardLink = '/dashboard'
@@ -46,7 +53,7 @@ const Header = () => {
               BabyGal
             </span>
           </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium hidden md:block">
+          <nav className="items-center space-x-6 text-sm font-medium hidden md:block">
             <Link href="/about">About</Link>
             <Link href="/services">Services</Link>
             <Link href="/events">Events</Link>
@@ -76,21 +83,7 @@ const Header = () => {
             <Link href="/profiles/1">Girls</Link>
             <Link href="/organizations">Organizations</Link>
             <Link href="/contact">Contact</Link>
-            <Button variant="ghost" className="mr-2" onClick={() => setIsAuthModalOpen(true)}>
-                Login / Sign up
-              </Button>
-
-              <ModeToggle />
-
-              </nav>
-              <div className="flex flex-col space-y-4 mb-8">
-                
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-          <nav className="hidden md:flex items-center">
-            {isLoggedIn ? (
+            {session ? (
               <>
                 <Link href={dashboardLink} passHref>
                   <Button variant="ghost" className="mr-2">
@@ -102,6 +95,34 @@ const Header = () => {
                     Logout
                   </Button>
                 </Link>
+              </>
+            ) : (
+              <Button variant="ghost" className="mr-2" onClick={() => setIsAuthModalOpen(true)}>
+                Login / Sign up
+              </Button>
+            )}
+
+              <ModeToggle />
+
+              </nav>
+              <div className="flex flex-col space-y-4 mb-8">
+                
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+          <nav className="hidden md:flex items-center">
+            {session ? (
+              <>
+                <Link href={dashboardLink} passHref>
+                  <Button variant="ghost" className="mr-2">
+                    Dashboard
+                  </Button>
+                </Link>
+                
+                  <Button variant="ghost" className="mr-2" onClick={()=>clearSession()}>
+                    Logout
+                  </Button>
               </>
             ) : (
               <Button variant="ghost" className="mr-2" onClick={() => setIsAuthModalOpen(true)}>

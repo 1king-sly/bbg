@@ -44,6 +44,9 @@ export default function ExpertEvents() {
     maxAttendees: "",
   });
 
+  const [disabled,setDisabled] = useState(false)
+
+
   useEffect(()=>{
     const fetchEvents=async()=>{
 
@@ -79,6 +82,8 @@ export default function ExpertEvents() {
     e.preventDefault();
 
     const access_token = localStorage.getItem("accessToken");
+
+    setDisabled(true)
   
 
       try {
@@ -124,9 +129,12 @@ export default function ExpertEvents() {
           });
         }
 
+        setDisabled(false)
+
        
       } catch (error: any) {
         console.error(error);
+        setDisabled(false)
 
         toast({
           title: "Action Failed",
@@ -239,7 +247,7 @@ export default function ExpertEvents() {
                   required
                 />
               </div>
-              <Button type="submit">
+              <Button type="submit" disabled={disabled}>
                 {editingEvent ? "Update Event" : "Create Event"}
               </Button>
             </form>
