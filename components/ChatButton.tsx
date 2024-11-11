@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { MessageCircle, X, Maximize2, Minimize2, Clock, Check } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
   id: string;
@@ -146,7 +147,7 @@ export default function ChatButton() {
                     : 'bg-muted'
                 }`}
               >
-                <p>{msg.content}</p>
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
                 {msg.sender === 'user' && (
                   <div className="flex justify-end items-center gap-1 mt-1">
                     <span className="text-xs opacity-70">
