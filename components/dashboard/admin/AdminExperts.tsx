@@ -59,28 +59,32 @@ export default function AdminExperts() {
     isVerified: false,
     password:''
   });
+  const [disabled,setDisabled] = useState(false)
+
+
+  const fetchExperts=async()=>{      
+    try{
+      const response = await fetch(`${API_URL}/experts`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+         
+        }
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+
+        setExperts(data);
+      }
+    }catch(error){
+      console.error('Failed to fetch Events',error)
+    }
+  }
 
 
   useEffect(()=>{
-    const fetchExperts=async()=>{      
-      try{
-        const response = await fetch(`${API_URL}/experts`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-           
-          }
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-
-          setExperts(data);
-        }
-      }catch(error){
-        console.error('Failed to fetch Events',error)
-      }
-    }
+  
     fetchExperts();
   },[])
 
@@ -89,6 +93,9 @@ export default function AdminExperts() {
     e.preventDefault();
 
     const access_token = localStorage.getItem("accessToken");
+
+    setDisabled(true)
+
 
     
     if (editingExpert) {
@@ -160,16 +167,17 @@ export default function AdminExperts() {
           body: JSON.stringify(expertForm),
         });
 
-        const data = await response.json();
+        const newExpert = await response.json();
 
 
         if (response.ok) {
 
-          setExperts(data);
           toast({
             title: "Action Successful",
             description: "Expert Successfully created",
           });
+
+          setExperts((prevExperts) => [...prevExperts, newExpert]);
 
           
 
@@ -194,6 +202,7 @@ export default function AdminExperts() {
             variant: "destructive",
           });
         }
+        setDisabled(false)
 
        
       } catch (error: any) {
@@ -205,10 +214,16 @@ export default function AdminExperts() {
           variant: "destructive",
         });
       }  
+
+      setDisabled(false)
+
      
 
     
     }
+
+    setDisabled(false)
+
   };
 
   const handleEdit =async (expert: any) => {
@@ -231,6 +246,9 @@ export default function AdminExperts() {
 
         const access_token = localStorage.getItem("accessToken");
 
+        setDisabled(true)
+
+
 
      try{
 
@@ -241,6 +259,10 @@ export default function AdminExperts() {
              Authorization: `Bearer ${access_token}`,
            },
          });
+
+         const data = await response.json()
+
+         console.log(data)
  
  
          if (response.ok) {
@@ -248,8 +270,6 @@ export default function AdminExperts() {
             title: "Expert Deleted",
             description: "The expert has been successfully deleted.",
         });
-            setExperts(experts.filter(expert => expert.id !== expertId));
-
          }else{
            toast({
              title: "Action Failed",
@@ -257,6 +277,9 @@ export default function AdminExperts() {
              variant: "destructive",
            });
          }
+
+         setDisabled(false)
+
  
      }catch(error:any){
         console.error(error);
@@ -265,16 +288,20 @@ export default function AdminExperts() {
            title: "Action Failed",
            description: "Failed to delete  expert",
            variant: "destructive",
+
          });
+
+         setDisabled(false)
+
      }
     
   };
 
-  const filteredExperts = experts.filter(expert =>
-    expert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    expert.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    expert.fieldOfExpertise.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredExperts = experts.filter(expert =>
+  //   expert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   expert.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   expert.fieldOfExpertise.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   return (
     <div className="space-y-6">
@@ -368,7 +395,7 @@ export default function AdminExperts() {
                   onChange={(e) => setExpertForm({ ...expertForm, isVerified: e.target.checked })}
                 />
               </div>
-              <Button type="submit">{editingExpert ? "Update Expert" : "Create Expert"}</Button>
+              <Button type="submit" disabled={disabled}>{editingExpert ? "Update Expert" : "Create Expert"}</Button>
             </form>
           </DialogContent>
         </Dialog>
@@ -392,8 +419,8 @@ export default function AdminExperts() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredExperts.map((expert) => (
-                <TableRow key={expert.id}>
+            {Array.isArray(experts) && experts.map((expert,index) =>  (
+                <TableRow key={index}>
                   <TableCell>
                     <div>
                       <p className="font-medium">{expert.name}</p>
@@ -412,10 +439,10 @@ export default function AdminExperts() {
                   <TableCell>{expert.sessionsHeld}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(expert)}>
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(expert)} disabled={disabled}>
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(expert.id)}>
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(expert.id)} disabled={disabled}>
                         <Trash className="h-4 w-4" />
                       </Button>
                     </div>
