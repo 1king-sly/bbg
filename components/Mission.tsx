@@ -6,7 +6,7 @@ import { Target } from "lucide-react";
 const Mission = () => {
   return (
     <section className="py-16 bg-primary text-primary-foreground">
-      <div className="container">
+      <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12">Our Mission</h2>
         <Card className="bg-primary-foreground text-primary">
           <CardHeader>

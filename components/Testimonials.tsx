@@ -37,8 +37,8 @@ const Testimonials = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-primary text-primary-foreground">
-      <div className="container">
+    <section className="py-16 bg-primary text-primary-foreground ">
+      <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12">Testimonials</h2>
         <div className="relative h-96">
           {testimonials.map((testimonial, index) => (
