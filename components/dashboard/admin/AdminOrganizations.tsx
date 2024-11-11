@@ -36,7 +36,7 @@ interface Organization{
   website:string | null,
   eventsCreated: number,
   coursesCreated:number,
-  totalParticipants: number,
+  sessionsHeld: number,
   isVerified: boolean,
 }
 
@@ -69,7 +69,7 @@ const dummyOrganizations = [
 
 export default function AdminOrganizations() {
   const { toast } = useToast();
-  const [organizations, setOrganizations] = useState<Organization[]>(dummyOrganizations);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingOrganization, setEditingOrganization] = useState<any>(null);
@@ -81,6 +81,8 @@ export default function AdminOrganizations() {
     website: "",
     isVerified: false,
   });
+  const [disabled,setDisabled] = useState(false)
+
 
   useEffect(()=>{
     const fetchExperts=async()=>{      
@@ -93,10 +95,12 @@ export default function AdminOrganizations() {
           }
         });
 
-        const data = await response.json();
+        const newOrganization = await response.json();
         if (response.ok) {
 
-          setOrganizations(data);
+
+          setOrganizations((prevOrganizations) => [...prevOrganizations, 
+            newOrganization]);
         }
       }catch(error){
         console.error('Failed to fetch Parners',error)
@@ -109,6 +113,9 @@ export default function AdminOrganizations() {
     e.preventDefault();
 
     const access_token = localStorage.getItem("accessToken");
+
+    setDisabled(true)
+
 
     
     if (editingOrganization) {
@@ -212,6 +219,8 @@ export default function AdminOrganizations() {
           });
         }
 
+        setDisabled(false)
+
        
       } catch (error: any) {
         console.error(error);
@@ -278,14 +287,14 @@ export default function AdminOrganizations() {
           variant: "destructive",
         });
     }
-    setOrganizations(organizations.filter(org => org.id !== organizationId));
+    // setOrganizations(organizations.filter(org => org.id !== organizationId));
    
   };
 
-  const filteredOrganizations = organizations.filter(org =>
-    org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    org.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredOrganizations = organizations.filter(org =>
+  //   org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   org.email.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   return (
     <div className="space-y-6">
@@ -379,7 +388,7 @@ export default function AdminOrganizations() {
                   onChange={(e) => setOrganizationForm({ ...organizationForm, isVerified: e.target.checked })}
                 />
               </div>
-              <Button type="submit">
+              <Button disabled={disabled} type="submit">
                 {editingOrganization ? "Update Organization" : "Create Organization"}
               </Button>
             </form>
@@ -399,12 +408,12 @@ export default function AdminOrganizations() {
                 <TableHead>Contact</TableHead>
                 <TableHead>Events</TableHead>
                 <TableHead>Courses</TableHead>
-                <TableHead>Participants</TableHead>
+                <TableHead>Sessions</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredOrganizations.map((org) => (
+              {Array.isArray(organizations) && organizations.map((org) => (
                 <TableRow key={org.id}>
                   <TableCell>
                     <div>
@@ -430,13 +439,13 @@ export default function AdminOrganizations() {
                       {org.coursesCreated}
                     </div>
                   </TableCell>
-                  <TableCell>{org.totalParticipants}</TableCell>
+                  <TableCell>{org.sessionsHeld}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(org)}>
+                      <Button disabled={disabled} variant="ghost" size="icon" onClick={() => handleEdit(org)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(org.id)}>
+                      <Button disabled={disabled} variant="ghost" size="icon" onClick={() => handleDelete(org.id)}>
                         <Trash className="h-4 w-4" />
                       </Button>
                     </div>

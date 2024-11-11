@@ -36,36 +36,11 @@ interface Partner{
   website:string | null,
   eventsCreated: number,
   coursesCreated:number,
-  totalParticipants: number,
+  sessionsHeld: number,
   isVerified: boolean,
 }
 
-const dummyPartners = [
-  {
-    id: 1,
-    name: "TechGirls Foundation",
-    email: "contact@techgirls.org",
-    phone: "+1234567890",
-    description: "Empowering girls through technology education",
-    website: "https://techgirls.org",
-    eventsCreated: 25,
-    coursesCreated: 8,
-    totalParticipants: 450,
-    isVerified: true,
-  },
-  {
-    id: 2,
-    name: "Women's Health Initiative",
-    email: "info@whi.org",
-    phone: "+1987654321",
-    description: "Supporting women's health and wellness",
-    website: "https://whi.org",
-    eventsCreated: 18,
-    coursesCreated: 5,
-    totalParticipants: 320,
-    isVerified: true,
-  },
-];
+
 
 export default function AdminPartners() {
   const { toast } = useToast();
@@ -81,6 +56,9 @@ export default function AdminPartners() {
     website: "",
     isVerified: false,
   });
+
+  const [disabled,setDisabled] = useState(false)
+
 
 
   useEffect(()=>{
@@ -110,6 +88,9 @@ export default function AdminPartners() {
     e.preventDefault();
 
     const access_token = localStorage.getItem("accessToken");
+
+    setDisabled(true)
+
 
     
     if (editingPartner) {
@@ -181,12 +162,14 @@ export default function AdminPartners() {
           body: JSON.stringify(partnerForm),
         });
 
-        const data = await response.json();
+        const newPartner = await response.json();
+
 
 
         if (response.ok) {
 
-          setPartners(data);
+          setPartners((prevPartners) => [...prevPartners, 
+             newPartner]);
           toast({
             title: "Action Successful",
             description: "Partner Successfully created",
@@ -214,6 +197,9 @@ export default function AdminPartners() {
             variant: "destructive",
           });
         }
+
+        setDisabled(false)
+
 
        
       } catch (error: any) {
@@ -281,13 +267,13 @@ export default function AdminPartners() {
           variant: "destructive",
         });
     }
-    setPartners(partners.filter(partner => partner.id !== partnerId));
+    // setPartners(partners.filter(partner => partner.id !== partnerId));
   };
 
-  const filteredPartners = partners.filter(partner =>
-    partner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    partner.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredPartners = Array.isArray(partners) && partners.filter(partner =>
+  //   partner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   partner.email.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   return (
     <div className="space-y-6">
@@ -303,7 +289,7 @@ export default function AdminPartners() {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => {
+            <Button  onClick={() => {
               setEditingPartner(null);
               setPartnerForm({
                 name: "",
@@ -379,7 +365,7 @@ export default function AdminPartners() {
                   onChange={(e) => setPartnerForm({ ...partnerForm, isVerified: e.target.checked })}
                 />
               </div>
-              <Button type="submit">{editingPartner ? "Update Partner" : "Create Partner"}</Button>
+              <Button disabled={disabled} type="submit">{editingPartner ? "Update Partner" : "Create Partner"}</Button>
             </form>
           </DialogContent>
         </Dialog>
@@ -397,12 +383,12 @@ export default function AdminPartners() {
                 <TableHead>Contact</TableHead>
                 <TableHead>Events</TableHead>
                 <TableHead>Courses</TableHead>
-                <TableHead>Participants</TableHead>
+                <TableHead>Sessions</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredPartners.map((partner) => (
+              {Array.isArray(partners) && partners.map((partner) => (
                 <TableRow key={partner.id}>
                   <TableCell>
                     <div>
@@ -428,13 +414,13 @@ export default function AdminPartners() {
                       {partner.coursesCreated}
                     </div>
                   </TableCell>
-                  <TableCell>{partner.totalParticipants}</TableCell>
+                  <TableCell>{partner.sessionsHeld}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(partner)}>
+                      <Button disabled={disabled} variant="ghost" size="icon" onClick={() => handleEdit(partner)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(partner.id)}>
+                      <Button disabled={disabled} variant="ghost" size="icon" onClick={() => handleDelete(partner.id)}>
                         <Trash className="h-4 w-4" />
                       </Button>
                     </div>
