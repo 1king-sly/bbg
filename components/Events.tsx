@@ -107,9 +107,16 @@ const Events = () => {
             variant: "destructive",
           });
         }
+        if(response.status === 401){
+          toast({
+            title: "Action Failed",
+            description: "Kindly login or create account to RSVP",
+            variant: "destructive",
+          });
+        }
 
 
-        if(!response.ok && response.status !== 402){
+        if(!response.ok && response.status !== 402 && response.status !== 401){
           toast({
             title: "Action Failed",
             description: "Failed to rsvp for event",

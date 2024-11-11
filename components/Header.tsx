@@ -26,7 +26,7 @@ const Header = () => {
 
   const clearSession =()=>{
     localStorage.removeItem("accessToken");
-    window.location.href = "/login";
+    window.location.href = "/";
 
   }
 
