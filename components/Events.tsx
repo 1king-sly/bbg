@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, MapPin,Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import Link from 'next/link'
 
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -17,7 +18,7 @@ interface Event {
   description: string;
   date: string;
   location: string;
-  attendees: number;
+  attendees: [];
   maxAttendees: number;
 }
 
@@ -26,6 +27,7 @@ const Events = () => {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [dateFilter, setDateFilter] = useState("");
   const [countyFilter, setCountyFilter] = useState("");
+  const [disabled,setDisabled] = useState(false)
 
     const { toast } = useToast();
 
@@ -69,9 +71,13 @@ const Events = () => {
   },[])
 
   const rsvp = async(id:number)=>{
+
           const access_token = localStorage.getItem("accessToken");
+                  setDisabled(true)
+
 
       try{
+
 
           const response = await fetch(`${API_URL}/events/${id}/register`, {
           method: "POST",
@@ -94,13 +100,25 @@ const Events = () => {
          
         }
 
-        if(!response.ok){
+        if(response.status === 402){
+          toast({
+            title: "Action Failed",
+            description: "You already rsvp'd for event",
+            variant: "destructive",
+          });
+        }
+
+
+        if(!response.ok && response.status !== 402){
           toast({
             title: "Action Failed",
             description: "Failed to rsvp for event",
             variant: "destructive",
           });
         }
+
+                setDisabled(false)
+
 
       }catch(error:any){
         console.error("An error occurred",error)
@@ -109,6 +127,9 @@ const Events = () => {
           description: "Something went wrong",
           variant: "destructive",
         });
+
+                        setDisabled(false)
+
       }
 
 
@@ -141,7 +162,7 @@ const Events = () => {
           <Button onClick={handleFilter}>Filter</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredEvents.map((event, index) => (
+          {filteredEvents?.slice(0,6).map((event, index) => (
             <Card key={index}>
               <CardHeader>
                 <CardTitle>{event.title}</CardTitle>
@@ -150,24 +171,34 @@ const Events = () => {
                 <p className="mb-2">{event.description}</p>
                 <div className="flex items-center text-sm text-gray-500 mb-2">
                   <Calendar className="h-4 w-4 mr-2" />
-                  {event.date}
-                </div>
+                  {new Date(event.date).toLocaleDateString()}                </div>
                 <div className="flex items-center text-sm text-gray-500">
                   <MapPin className="h-4 w-4 mr-2" />
                   {event.location}
                 </div>
                 <div className="flex items-center">
                   <Users className="h-4 w-4 mr-2" />
-                  {event.attendees|| 0}/{event.maxAttendees} Attendees
+                  {event.attendees.length|| 0}/{event.maxAttendees} Attendees
                 </div>
-                <Button type="submit" onClick={()=>rsvp(event.id)}>
+                <div className='w-full flex justify-end mt-2'>
+
+                <Button type="submit" onClick={()=>rsvp(event.id)}  disabled={disabled}>
                   RSVP
                 </Button>      
+                </div>
                 
               </CardContent>
             </Card>
           ))}
         </div>
+        {filteredEvents?.length > 6&&(
+
+        <div className="w-full flex justify-end mt-4">
+          <Link href="/events">
+          <Button>More events</Button>
+          </Link>
+        </div>
+        )}
       </div>
     </section>
   );
