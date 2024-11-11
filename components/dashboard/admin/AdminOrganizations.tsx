@@ -40,32 +40,7 @@ interface Organization{
   isVerified: boolean,
 }
 
-const dummyOrganizations = [
-  {
-    id: 1,
-    name: "Girls Education Network",
-    email: "contact@gen.org",
-    phone: "+1234567890",
-    description: "Supporting girls' education and empowerment",
-    website: "https://gen.org",
-    eventsCreated: 30,
-    coursesCreated: 12,
-    totalParticipants: 600,
-    isVerified: true,
-  },
-  {
-    id: 2,
-    name: "Youth Development Center",
-    email: "info@ydc.org",
-    phone: "+1987654321",
-    description: "Fostering youth development and leadership",
-    website: "https://ydc.org",
-    eventsCreated: 22,
-    coursesCreated: 8,
-    totalParticipants: 450,
-    isVerified: true,
-  },
-];
+
 
 export default function AdminOrganizations() {
   const { toast } = useToast();
@@ -85,7 +60,7 @@ export default function AdminOrganizations() {
 
 
   useEffect(()=>{
-    const fetchExperts=async()=>{      
+    const fetchOrganizations=async()=>{      
       try{
         const response = await fetch(`${API_URL}/organizations`, {
           method: "GET",
@@ -95,18 +70,17 @@ export default function AdminOrganizations() {
           }
         });
 
-        const newOrganization = await response.json();
+        const data = await response.json();
         if (response.ok) {
 
 
-          setOrganizations((prevOrganizations) => [...prevOrganizations, 
-            newOrganization]);
+          setOrganizations(data);
         }
       }catch(error){
         console.error('Failed to fetch Parners',error)
       }
     }
-    fetchExperts();
+    fetchOrganizations();
   },[])
 
   const handleSubmit =async (e: React.FormEvent) => {
@@ -188,9 +162,19 @@ export default function AdminOrganizations() {
         const data = await response.json();
 
 
+
+
         if (response.ok) {
 
-          setOrganizations(data);
+
+          const newOrganization = await response.json();
+          if (response.ok) {
+  
+  
+            setOrganizations((prevOrganizations) => [...prevOrganizations, 
+              newOrganization]);
+          }   
+          
           toast({
             title: "Action Successful",
             description: "Partner Successfully created",

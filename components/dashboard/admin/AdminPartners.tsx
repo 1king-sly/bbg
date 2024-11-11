@@ -62,7 +62,7 @@ export default function AdminPartners() {
 
 
   useEffect(()=>{
-    const fetchExperts=async()=>{      
+    const fetchPartners=async()=>{      
       try{
         const response = await fetch(`${API_URL}/partners`, {
           method: "GET",
@@ -81,7 +81,7 @@ export default function AdminPartners() {
         console.error('Failed to fetch Parners',error)
       }
     }
-    fetchExperts();
+    fetchPartners();
   },[])
 
   const handleSubmit =async (e: React.FormEvent) => {
