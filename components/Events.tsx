@@ -185,7 +185,7 @@ const Events = () => {
                 </div>
                 <div className="flex items-center">
                   <Users className="h-4 w-4 mr-2" />
-                  {event.attendees.length|| 0}/{event.maxAttendees} Attendees
+                  {event.attendees?.length|| 0}/{event.maxAttendees} Attendees
                 </div>
                 <div className='w-full flex justify-end mt-2'>
 
@@ -198,7 +198,7 @@ const Events = () => {
             </Card>
           ))}
         </div>
-        {filteredEvents?.length > 6&&(
+        {filteredEvents?.length > 6 &&(
 
         <div className="w-full flex justify-end mt-4">
           <Link href="/events">

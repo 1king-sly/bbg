@@ -290,7 +290,7 @@ export default function ExpertEvents() {
                 </div>
                 <div className="flex items-center">
                   <Users className="h-4 w-4 mr-2" />
-                  {event.attendees.length || 0}/{event.maxAttendees} Attendees
+                  {event.attendees?.length || 0}/{event.maxAttendees} Attendees
                 </div>
               </div>
             </CardContent>
