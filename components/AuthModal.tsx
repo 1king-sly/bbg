@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -10,44 +10,48 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
-export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const [isLogin, setIsLogin] = useState(true)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const { toast } = useToast()
+export function AuthModal({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const { toast } = useToast();
+  const [disabled, setDisabled] = useState(false);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const handleSubmit =async (e: React.FormEvent) => {
-    e.preventDefault()
+    setDisabled(true);
 
-    try{
-
+    try {
       const formData = {
         name: name,
         email: email,
         password: password,
       };
       const url = `${API_URL}/${isLogin ? "auth/token" : "users"}`;
-  
+
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      console.log(response)
+      console.log(response);
 
-  
       if (response.ok) {
-        
         const data = await response.json();
-
 
         if (isLogin) {
           localStorage.setItem("accessToken", data.access_token);
@@ -55,51 +59,45 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
 
         toast({
           title: isLogin ? "Login Successful" : "Signup Successful",
-          description:'You have been successfully  authenticated',
-          
-        })
-    }
+          description: "You have been successfully  authenticated",
+        });
+      }
 
-    if(!response.ok){
-      toast({
-        title: isLogin ? "Login failed" : "Signup Failed",
-        description:'You have not been  authenticated',
-        variant:'destructive'
-        
-      })
-    }
+      if (!response.ok) {
+        toast({
+          title: isLogin ? "Login failed" : "Signup Failed",
+          description: "You have not been  authenticated",
+          variant: "destructive",
+        });
+      }
 
-    
+      onClose();
 
-    onClose()
-
-
-  }catch(error:any){
-      console.error('An error occured', error)
+      setDisabled(false);
+    } catch (error: any) {
+      console.error("An error occured", error);
 
       toast({
         title: isLogin ? "Login failed" : "Signup Failed",
-        description:'You have not been  authenticated',
-        variant:'destructive'
-        
-      })
+        description: "You have not been  authenticated",
+        variant: "destructive",
+      });
 
-              onClose()
+      onClose();
 
-
+      setDisabled(false);
     }
-    
-    
-    
-  }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isLogin ? 'Login' : 'Sign Up'}</DialogTitle>
+          <DialogTitle>{isLogin ? "Login" : "Sign Up"}</DialogTitle>
           <DialogDescription>
-            {isLogin ? 'Enter your credentials to login.' : 'Create an account to get started.'}
+            {isLogin
+              ? "Enter your credentials to login."
+              : "Create an account to get started."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -133,15 +131,17 @@ export function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =>
             />
           </div>
           <DialogFooter>
-            <Button type="submit">{isLogin ? 'Login' : 'Sign Up'}</Button>
+            <Button disabled={disabled} type="submit">{isLogin ? "Login" : "Sign Up"}</Button>
           </DialogFooter>
         </form>
         <div className="mt-4 text-center">
-          <Button variant="link" onClick={() => setIsLogin(!isLogin)}>
-            {isLogin ? "Don't have an account? Sign up" : "Already have an account? Login"}
+          <Button disabled={disabled} variant="link" onClick={() => setIsLogin(!isLogin)}>
+            {isLogin
+              ? "Don't have an account? Sign up"
+              : "Already have an account? Login"}
           </Button>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

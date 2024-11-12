@@ -7,6 +7,11 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Bell, Download } from "lucide-react";
 import Link from 'next/link';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import UserProfile from '@/components/dashboard/user/UserProfile';
+import UserCourses from '@/components/dashboard/user/UserCourses';
+import UserEvents from '@/components/dashboard/user/UserEvents';
+import UserSessions from '@/components/dashboard/user/UserSessions';
 
 // Dummy data
 const userCourses = [
@@ -40,12 +45,47 @@ const events = [
 const menstrualData = {
   lastPeriod: new Date(2024, 2, 1),
   cycleLength: 28,
-  currentDay: 15,
+  currentDay: 28,
   status: "normal" // normal, fertile, menstruating, warning
+};
+
+const pregnancyData = {
+  dueDate: new Date(2024, 12, 1),
+  weeksPregnant: 20,
+  trimester: "Second",
 };
 
 export default function Dashboard() {
   const [progress, setProgress] = useState(0);
+
+  const [activeTab, setActiveTab] = useState("overview");
+  const [status, setStatus] = useState("normal");
+  const [lastPeriod, setLastPeriod] = useState(menstrualData.lastPeriod);
+  const [showPregnancyTracking, setShowPregnancyTracking] = useState(false);
+
+  const updateLastPeriod = () => {
+    const newDate = prompt("Enter the new last period date (YYYY-MM-DD):", lastPeriod.toISOString().split("T")[0]);
+    if (newDate) setLastPeriod(new Date(newDate));
+  };
+
+
+
+  useEffect(() => {
+    // Update the status based on the current day in the menstrual cycle
+    const day = menstrualData.currentDay;
+
+
+    if (day >= 1 && day <= 5) {
+      setStatus("menstruating");
+    } else if (day >= 12 && day <= 16) {
+      setStatus("fertile");
+    } else if (day >= 24) {
+      setStatus("warning");
+    } else {
+      setStatus("normal");
+    }
+  }, []);
+
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -65,42 +105,78 @@ export default function Dashboard() {
       case "normal": return "bg-blue-500";
       case "fertile": return "bg-green-500";
       case "menstruating": return "bg-red-500";
-      case "warning": return "bg-yellow-500";
+      case "warning": return "bg-rose-500";
       default: return "bg-gray-500";
     }
   };
 
   return (
     <div className="container mx-auto py-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+<Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="events">Events</TabsTrigger>
+          <TabsTrigger value="courses">Courses</TabsTrigger>
+          <TabsTrigger value="sessions">Sessions</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {/* Menstrual Cycle Progress */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Cycle Tracking</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="relative pt-1">
-              <div className="flex mb-2 items-center justify-between">
-                <div>
-                  <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-white bg-pink-600">
-                    Day {menstrualData.currentDay}
-                  </span>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs font-semibold inline-block text-pink-600">
-                    {Math.round((menstrualData.currentDay / menstrualData.cycleLength) * 100)}%
-                  </span>
-                </div>
-              </div>
-              <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-pink-200">
-                <div
-                  style={{ width: `${(menstrualData.currentDay / menstrualData.cycleLength) * 100}%` }}
-                  className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"
-                ></div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {!showPregnancyTracking ? (
+              // Cycle Tracking Card
+              <Card>
+                <CardHeader>
+                  <CardTitle>Cycle Tracking</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative pt-1">
+                    <div className="flex mb-2 items-center justify-between">
+                      <div>
+                      <span className={`text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-white ${getStatusColor(status)}`}>
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                      </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs font-semibold inline-block text-pink-600">
+                          {Math.round((menstrualData.currentDay / menstrualData.cycleLength) * 100)}%
+                        </span>
+                      </div>
+                    </div>
+                    <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-pink-200">
+                      <div
+                        style={{ width: `${(menstrualData.currentDay / menstrualData.cycleLength) * 100}%` }}
+                        className={`shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center ${getStatusColor(status)}`}
+                      ></div>
+                    </div>
+
+                    <Button variant="outline" size="sm" onClick={updateLastPeriod} className="mt-2">
+                    Update Last Period
+                  </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              // Pregnancy Tracking Card
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pregnancy Tracking</CardTitle>
+                  <Button variant="outline" size="sm" onClick={() => setShowPregnancyTracking(false)} className="mt-2">
+                    Switch to Cycle Tracking
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative pt-1">
+                    <p className="text-sm font-semibold">Weeks Pregnant: {pregnancyData.weeksPregnant}</p>
+                    <p className="text-sm font-semibold">Trimester: {pregnancyData.trimester}</p>
+                    <p className="text-sm font-semibold">Due Date: {pregnancyData.dueDate.toDateString()}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
 
         {/* Calendar */}
         <Card>
@@ -160,6 +236,25 @@ export default function Dashboard() {
           </Card>
         ))}
       </div>
+        </TabsContent>
+
+        <TabsContent value="profile">
+          <UserProfile />
+        </TabsContent>
+
+        <TabsContent value="events">
+          <UserEvents />
+        </TabsContent>
+
+        <TabsContent value="courses">
+          <UserCourses />
+        </TabsContent>
+
+        <TabsContent value="sessions">
+          <UserSessions />
+        </TabsContent>
+      </Tabs>
+    
     </div>
   );
 }
