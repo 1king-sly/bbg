@@ -5,8 +5,8 @@ import { Heart } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-100 py-8 dark:text-black px-4">
-      <div className="container">
+    <footer className="bg-gray-100 py-8 dark:text-black px-4 ">
+      <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <Link href="/" className="flex items-center space-x-2 mb-4">
