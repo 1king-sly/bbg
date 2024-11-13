@@ -160,13 +160,64 @@ export default function ExpertEvents() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (eventId: number) => {
-    setEvents(events.filter((event) => event.id !== eventId));
-    toast({
-      title: "Event Deleted",
-      description: "The event has been successfully deleted.",
-    });
-  };
+  
+const handleDelete =async (eventId: number) => {
+
+  const access_token = localStorage.getItem("accessToken");
+
+  setDisabled(true)
+
+  try{
+
+      const response = await fetch(`${API_URL}/events/${eventId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      const data = await response.json() 
+
+      if (response.ok) {
+        toast({
+          title: "Event Deleted",
+          description: "The event has been successfully deleted.",
+      });
+      }else{
+        toast({
+          title: "Action Failed",
+          description: "Failed to delete event",
+          variant: "destructive",
+        });
+      }
+
+      setDisabled(false)
+
+
+  }catch(error:any){
+      console.error(error);
+
+      toast({
+        title: "Action Failed",
+        description: "Failed to delete  expert",
+        variant: "destructive",
+
+      });
+
+      setDisabled(false)
+
+  }
+
+};
+
+  // const handleDelete = (eventId: number) => {
+  //   setEvents(events.filter((event) => event.id !== eventId));
+  //   toast({
+  //     title: "Event Deleted",
+  //     description: "The event has been successfully deleted.",
+  //   });
+  // };
 
   return (
     <div className="space-y-6">
@@ -267,12 +318,15 @@ export default function ExpertEvents() {
                 <span>{event.title}</span>
                 <div className="flex gap-2">
                   <Button
+                                    disabled={disabled}
+
                     variant="ghost"
                     size="icon"
                     onClick={() => handleEdit(event)}>
                     <Pencil className="h-4 w-4" />
                   </Button>
                   <Button
+                  disabled={disabled}
                     variant="ghost"
                     size="icon"
                     onClick={() => handleDelete(event.id)}>

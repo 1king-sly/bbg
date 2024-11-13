@@ -43,34 +43,37 @@ export default function ExpertEvents() {
     location: "",
     maxAttendees: "",
   });
+  const [disabled,setDisabled] = useState(false)
+
+  const fetchEvents=async()=>{
+
+    const access_token = localStorage.getItem("accessToken");
+    
+    try{
+      const response = await fetch(`${API_URL}/events/me`, {
+        method: "GET",
+        mode:'no-cors',
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        }
+      });
+
+      const data = await response.json();
+
+
+      if (response.ok) {
+       
+        setEvents(data);
+      }
+
+    }catch(error){
+      console.error('Failed to fetch Events',error)
+    }
+  }
 
   useEffect(()=>{
-    const fetchEvents=async()=>{
 
-      const access_token = localStorage.getItem("accessToken");
-      
-      try{
-        const response = await fetch(`${API_URL}/events/me`, {
-          method: "GET",
-          mode:'no-cors',
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${access_token}`,
-          }
-        });
-
-        const data = await response.json();
-
-
-        if (response.ok) {
-         
-          setEvents(data);
-        }
-
-      }catch(error){
-        console.error('Failed to fetch Events',error)
-      }
-    }
     fetchEvents();
   },[])
 
@@ -79,10 +82,74 @@ export default function ExpertEvents() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setDisabled(true)
+
+
     const access_token = localStorage.getItem("accessToken");
 
 
+    if (editingEvent) {
+      try{
+
+        const response = await fetch(`${API_URL}/experts/${editingEvent.id}`, {
+           method: "PUT",
+           headers: {
+             "Content-Type": "application/json",
+             Authorization: `Bearer ${access_token}`,
+           },
+           body: JSON.stringify(eventForm),
+         });
  
+ 
+         if (response.ok) {
+          const updatedEvent = await response.json();
+          setDisabled(false)
+
+
+          setEvents((prev) =>
+              prev.map((event) =>
+                event.id === editingEvent.id ? updatedEvent : event
+              )
+          );
+
+          toast({
+            title: "Expert Updated",
+            description: "The expert has been successfully updated.",
+        });
+
+        setIsDialogOpen(false);
+        setEditingEvent(null);
+        setEventForm({
+            title: "",
+            description: "",
+            date: "",
+            location: "",
+            maxAttendees: "",
+
+        });
+         }else{
+           toast({
+             title: "Action Failed",
+             description: "Failed to create  expert",
+             variant: "destructive",
+           });
+           setDisabled(false)
+
+         }
+ 
+     }catch(error:any){
+        console.error(error);
+        setDisabled(false)
+
+ 
+         toast({
+           title: "Action Failed",
+           description: "Failed to create  expert",
+           variant: "destructive",
+         });
+     }
+
+    } else {
 
       try {
 
@@ -110,6 +177,8 @@ export default function ExpertEvents() {
             title: "Action Successful",
             description: "Event Successfully created",
           });
+          setDisabled(false)
+
           setIsDialogOpen(false);
           setEditingEvent(null);
           setEventForm({
@@ -127,18 +196,25 @@ export default function ExpertEvents() {
             description: "Failed to create  event",
             variant: "destructive",
           });
+
+          setDisabled(false)
+
         }
 
        
       } catch (error: any) {
         console.error(error);
 
+        setDisabled(false)
+
+
         toast({
           title: "Action Failed",
           description: "Failed to create  event",
           variant: "destructive",
         });
-      }    
+      } 
+      } 
     }
 
   const handleEdit = (event: any) => {
@@ -153,13 +229,63 @@ export default function ExpertEvents() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (eventId: number) => {
-    setEvents(events.filter((event) => event.id !== eventId));
-    toast({
-      title: "Event Deleted",
-      description: "The event has been successfully deleted.",
-    });
-  };
+const handleDelete =async (eventId: number) => {
+
+  const access_token = localStorage.getItem("accessToken");
+
+  setDisabled(true)
+
+  try{
+
+      const response = await fetch(`${API_URL}/events/${eventId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      const data = await response.json() 
+
+      if (response.ok) {
+        toast({
+          title: "Event Deleted",
+          description: "The event has been successfully deleted.",
+      });
+      }else{
+        toast({
+          title: "Action Failed",
+          description: "Failed to delete event",
+          variant: "destructive",
+        });
+      }
+
+      setDisabled(false)
+
+
+  }catch(error:any){
+      console.error(error);
+
+      toast({
+        title: "Action Failed",
+        description: "Failed to delete  expert",
+        variant: "destructive",
+
+      });
+
+      setDisabled(false)
+
+  }
+
+};
+
+  // const handleDelete = (eventId: number) => {
+  //   setEvents(events.filter((event) => event.id !== eventId));
+  //   toast({
+  //     title: "Event Deleted",
+  //     description: "The event has been successfully deleted.",
+  //   });
+  // };
 
   return (
     <div className="space-y-6">
@@ -244,7 +370,7 @@ export default function ExpertEvents() {
                   required
                 />
               </div>
-              <Button type="submit">
+              <Button type="submit" disabled={disabled}>
                 {editingEvent ? "Update Event" : "Create Event"}
               </Button>
             </form>
@@ -260,12 +386,14 @@ export default function ExpertEvents() {
                 <span>{event.title}</span>
                 <div className="flex gap-2">
                   <Button
+                    disabled={disabled}
                     variant="ghost"
                     size="icon"
                     onClick={() => handleEdit(event)}>
                     <Pencil className="h-4 w-4" />
                   </Button>
                   <Button
+                    disabled={disabled}
                     variant="ghost"
                     size="icon"
                     onClick={() => handleDelete(event.id)}>
