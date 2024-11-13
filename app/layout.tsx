@@ -13,6 +13,7 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'BabyGal NGO',
   description: 'Supporting girls through their teenage years, pregnancy, and parenthood',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({

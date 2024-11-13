@@ -3,8 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowLeft, Lock } from "lucide-react";
-import { motion } from "framer-motion";
-
+import {motion} from "framer-motion"
 export default function NotAuthorized() {
   const router = useRouter();
 
