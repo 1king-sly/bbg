@@ -13,6 +13,10 @@ import ExpertProfile from "@/components/dashboard/expert/ExpertProfile";
 import ExpertEvents from "@/components/dashboard/expert/ExpertEvents";
 import ExpertCourses from "@/components/dashboard/expert/ExpertCourses";
 import ExpertSessions from "@/components/dashboard/expert/ExpertSessions";
+import { useRouter } from "next/navigation";
+import NotAuthorized from "@/components/NotAuthorized";
+
+
 
 
 
@@ -30,11 +34,24 @@ type Stats = {
 };
 
 export default function ExpertDashboard() {
+  const router = useRouter();
+
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
 
   const [stats, setStats] = useState<Stats | null>(null);
   const [sessionData, setSessionData] = useState<{ month: string, sessions: number }[]>([]);
+
+  const [session, setSession] = useState(false);
+
+  const [role, setRole] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+
+
+
+
+
+
 
   const fetchStats = async()=>{
     const access_token = localStorage.getItem("accessToken");
@@ -51,7 +68,6 @@ export default function ExpertDashboard() {
 
       const data = await response.json();
 
-      console.log(data)
 
 
       if (response.ok) {
@@ -68,10 +84,38 @@ export default function ExpertDashboard() {
     }
   }
 
-  useEffect(()=>{
-  
+  const fetchSession = async () => {
+    const access_token = localStorage.getItem("accessToken");
+    const accessRole = localStorage.getItem("role");
+
+    if (access_token && accessRole !== "" && accessRole !== null) {
+      setRole(accessRole);
+      setSession(true);
+      if (access_token && accessRole) {
+        setRole(accessRole);
+
+        if (accessRole !== 'expert') {
+         
+        } else {
+          setIsVerified(true); 
+        }
+      }
+    }
+  };
+
+  useEffect( () => {
     fetchStats();
-  },[])
+     fetchSession();
+
+
+
+  }, []);
+
+  if (!isVerified) {
+    return <NotAuthorized/>;  
+  }
+
+ 
 
   const calculateChange = (monthlyCounts: { [key: string]: number }, currentMonth: string) => {
     const months = Object.keys(monthlyCounts);
@@ -91,6 +135,7 @@ export default function ExpertDashboard() {
   const currentMonth = stats ? getMostRecentMonth(stats.monthly_counts.events) : null;
 
   return (
+    
     <div className="container mx-auto py-12">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-5 mb-8">

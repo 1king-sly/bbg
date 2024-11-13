@@ -62,6 +62,9 @@ export function AuthModal({
           title: isLogin ? "Login Successful" : "Signup Successful",
           description: "You have been successfully  authenticated",
         });
+        
+        onClose();
+
       }
 
       if (!response.ok) {
@@ -72,7 +75,6 @@ export function AuthModal({
         });
       }
 
-      onClose();
 
       setDisabled(false);
     } catch (error: any) {
@@ -84,7 +86,6 @@ export function AuthModal({
         variant: "destructive",
       });
 
-      onClose();
 
       setDisabled(false);
     }

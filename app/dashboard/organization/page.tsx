@@ -13,6 +13,8 @@ import OrganizationCourses from '@/components/dashboard/organization/Organizatio
 import OrganizationEvents from '@/components/dashboard/organization/OrganizationEvents';
 import OrganizationProfile from '@/components/dashboard/organization/OrganizationProfile';
 import OrganiztaionSessions from '@/components/dashboard/organization/OrganiztaionSessions';
+import { useRouter } from "next/navigation";
+import NotAuthorized from "@/components/NotAuthorized";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -35,6 +37,10 @@ export default function ExpertDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState<Stats | null>(null);
   const [sessionData, setSessionData] = useState<{ month: string, sessions: number }[]>([]);
+  const [role, setRole] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  const [session, setSession] = useState(false);
+
 
   const fetchStats = async()=>{
     const access_token = localStorage.getItem("accessToken");
@@ -68,10 +74,36 @@ export default function ExpertDashboard() {
     }
   }
 
-  useEffect(()=>{
-  
+  const fetchSession = async () => {
+    const access_token = localStorage.getItem("accessToken");
+    const accessRole = localStorage.getItem("role");
+
+    if (access_token && accessRole !== "" && accessRole !== null) {
+      setRole(accessRole);
+      setSession(true);
+      if (access_token && accessRole) {
+        setRole(accessRole);
+
+        if (accessRole !== 'organization') {
+         
+        } else {
+          setIsVerified(true); 
+        }
+      }
+    }
+  };
+
+  useEffect( () => {
     fetchStats();
-  },[])
+     fetchSession();
+
+
+
+  }, []);
+
+  if (!isVerified) {
+    return <NotAuthorized/>;  
+  }
 
   const calculateChange = (monthlyCounts: { [key: string]: number }, currentMonth: string) => {
     const months = Object.keys(monthlyCounts);

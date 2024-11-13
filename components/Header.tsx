@@ -16,19 +16,44 @@ const Header = () => {
   const pathname = usePathname()
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [session,setSession] =useState(false)
-
-  let dashboardUrl = ''
+  const [dashboardUrl,setDashboardUrl] = useState('#')
   
   const [role,setRole] =useState('')
 
   const fetchSession = async()=>{
     const access_token = localStorage.getItem("accessToken");
     const accessRole = localStorage.getItem("role")
-    if (access_token) {
-      setSession(true);
-    }
-    if(accessRole !== "" && accessRole !== null){
+
+    if(access_token && accessRole !== "" && accessRole !== null){
       setRole(accessRole)
+
+
+      switch(accessRole){
+        case "partner":
+          setDashboardUrl('/dashboard/partner')
+          break;
+        case "ADMIN":
+          setDashboardUrl('/dashboard/admin')
+          break;
+        case "organization":
+          setDashboardUrl('/dashboard/organization')
+          break;
+        case "expert":
+          setDashboardUrl('/dashboard/expert')
+          break;
+        case "USER":
+          setDashboardUrl('/dashboard')
+          break;
+        default:
+          setDashboardUrl('#')
+      }
+
+
+
+
+
+      setSession(true);
+
 
       
     }
@@ -101,7 +126,7 @@ const Header = () => {
             <Link href="/contact">Contact</Link>
             {session ? (
               <>
-                <Link href={dashboardLink} passHref>
+                <Link href={dashboardUrl}>
                   <Button variant="ghost" className="mr-2">
                     Dashboard
                   </Button>
@@ -130,7 +155,7 @@ const Header = () => {
           <nav className="hidden md:flex items-center">
             {session ? (
               <>
-                <Link href={dashboardLink} passHref>
+                <Link href={dashboardUrl} passHref>
                   <Button variant="ghost" className="mr-2">
                     Dashboard
                   </Button>

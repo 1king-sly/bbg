@@ -13,6 +13,9 @@ import UserCourses from '@/components/dashboard/user/UserCourses';
 import UserEvents from '@/components/dashboard/user/UserEvents';
 import UserSessions from '@/components/dashboard/user/UserSessions';
 
+import { useRouter } from "next/navigation";
+import NotAuthorized from "@/components/NotAuthorized";
+
 // Dummy data
 const userCourses = [
   {
@@ -63,6 +66,11 @@ export default function Dashboard() {
   const [lastPeriod, setLastPeriod] = useState(menstrualData.lastPeriod);
   const [showPregnancyTracking, setShowPregnancyTracking] = useState(false);
 
+  const [session, setSession] = useState(false);
+
+  const [role, setRole] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+
   const updateLastPeriod = () => {
     const newDate = prompt("Enter the new last period date (YYYY-MM-DD):", lastPeriod.toISOString().split("T")[0]);
     if (newDate) setLastPeriod(new Date(newDate));
@@ -109,6 +117,36 @@ export default function Dashboard() {
       default: return "bg-gray-500";
     }
   };
+
+  const fetchSession = async () => {
+    const access_token = localStorage.getItem("accessToken");
+    const accessRole = localStorage.getItem("role");
+
+    if (access_token && accessRole !== "" && accessRole !== null) {
+      setRole(accessRole);
+      setSession(true);
+      if (access_token && accessRole) {
+        setRole(accessRole);
+
+        if (accessRole !== 'USER') {
+         
+        } else {
+          setIsVerified(true); 
+        }
+      }
+    }
+  };
+
+  useEffect( () => {
+     fetchSession();
+
+
+
+  }, []);
+
+  if (!isVerified) {
+    return <NotAuthorized/>;  
+  }
 
   return (
     <div className="container mx-auto py-12">
