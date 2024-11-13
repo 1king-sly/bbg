@@ -82,26 +82,7 @@ export default function ExpertEvents() {
     const access_token = localStorage.getItem("accessToken");
 
 
-    // if (editingEvent) {
-    //   // Update existing event
-    //   const updatedEvents = events.map((event):{event:any}) =>{
-    //     {
-    //     event.id === editingEvent.id
-    //       ? {
-    //           ...event,
-    //           ...eventForm,
-    //           maxAttendees: parseInt(eventForm.maxAttendees),
-    //         }
-    //       : event
-    //   );
-    //   setEvents(updatedEvents);
-    //   toast({
-    //     title: "Event Updated",
-    //     description: "The event has been successfully updated.",
-    //   });
-    // } else {
-    //   // Create new event
-     
+ 
 
       try {
 
@@ -122,9 +103,9 @@ export default function ExpertEvents() {
 
         const data = await response.json();
 
-        console.log(data)
 
         if (response.ok) {
+          setEvents((prev)=>[...prev,data])
           toast({
             title: "Action Successful",
             description: "Event Successfully created",

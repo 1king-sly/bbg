@@ -48,13 +48,14 @@ export function AuthModal({
         body: JSON.stringify(formData),
       });
 
-      console.log(response);
 
       if (response.ok) {
         const data = await response.json();
 
         if (isLogin) {
           localStorage.setItem("accessToken", data.access_token);
+          localStorage.setItem("role", data.role);
+
         }
 
         toast({

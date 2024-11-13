@@ -103,9 +103,13 @@ export default function ExpertEvents() {
           body: JSON.stringify(newEvent),
         });
 
+        const data = await response.json()
+
 
 
         if (response.ok) {
+
+          setEvents((prev)=>[...prev,data])
           toast({
             title: "Action Successful",
             description: "Event Successfully created",

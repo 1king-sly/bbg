@@ -17,12 +17,28 @@ const Header = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [session,setSession] =useState(false)
 
-  useEffect(() => {
+  let dashboardUrl = ''
+  
+  const [role,setRole] =useState('')
+
+  const fetchSession = async()=>{
     const access_token = localStorage.getItem("accessToken");
+    const accessRole = localStorage.getItem("role")
     if (access_token) {
       setSession(true);
     }
+    if(accessRole !== "" && accessRole !== null){
+      setRole(accessRole)
+
+      
+    }
+  }
+
+  useEffect(() => {
+    fetchSession()
   }, []);
+
+ 
 
   const clearSession =()=>{
     localStorage.removeItem("accessToken");
@@ -133,7 +149,10 @@ const Header = () => {
           </nav>
         </div>
       </div>
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => {
+    setIsAuthModalOpen(false);
+    fetchSession();
+  }} />
 
       
     </header>
