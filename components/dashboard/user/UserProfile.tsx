@@ -36,6 +36,8 @@ export default function ExpertProfile() {
     hasChild: false,
   });
 
+  const [disabled, setDisabled] = useState(false);
+
   const fetchUser = async () => {
     const access_token = localStorage.getItem("accessToken");
 
@@ -50,8 +52,6 @@ export default function ExpertProfile() {
 
       const data = await response.json();
 
-      console.log(data);
-
       if (response.ok) {
         setProfile(data);
       }
@@ -64,18 +64,49 @@ export default function ExpertProfile() {
     fetchUser();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically update the profile via API
 
-    console.log(profile)
-    toast({
-      title: "Profile Updated",
-      description: "Your profile has been successfully updated.",
-    });
+    setDisabled(true);
+
+    const access_token = localStorage.getItem("accessToken");
+
+    try {
+      const response = await fetch(`${API_URL}/users/me`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+        body: JSON.stringify(profile),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setProfile(data);
+
+        toast({
+          title: "Profile Updated",
+          description: "Your profile has been successfully updated.",
+        });
+      } else {
+        toast({
+          title: "Failed to update profile",
+          description: "Your profile failed to update",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch user", error);
+    }
+
+    setDisabled(false);
   };
 
-  const handleStatusChange = (status: "isPregnant" | "isMenstruating" | "hasChild") => {
+  const handleStatusChange = (
+    status: "isPregnant" | "isMenstruating" | "hasChild"
+  ) => {
     setProfile((prevProfile) => ({
       ...prevProfile,
       isPregnant: status === "isPregnant",
@@ -84,15 +115,13 @@ export default function ExpertProfile() {
     }));
   };
 
-
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>Profile</CardTitle>
       </CardHeader>
       <CardContent>
-        {profile && (
+        {profile.name !== "" && (
           <>
             <div className="flex items-center gap-4 mb-6">
               <Avatar className="h-24 w-24">
@@ -147,9 +176,11 @@ export default function ExpertProfile() {
             </div> */}
               </div>
 
- {/* Status Selection */}
- <div className="space-y-4 mt-6">
-                <label className="text-sm font-medium">Select your status:</label>
+              {/* Status Selection */}
+              <div className="space-y-4 mt-6">
+                <label className="text-sm font-medium">
+                  Select your status:
+                </label>
                 <div className="space-y-2">
                   <label className="flex items-center space-x-2">
                     <input
@@ -190,7 +221,12 @@ export default function ExpertProfile() {
                       type="date"
                       max={new Date().toISOString().split("T")[0]}
                       value={profile.pregnancyDate || ""}
-                      onChange={(e) => setProfile({ ...profile, pregnancyDate: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({
+                          ...profile,
+                          pregnancyDate: e.target.value,
+                        })
+                      }
                     />
                   </div>
                 )}
@@ -203,7 +239,12 @@ export default function ExpertProfile() {
                         type="date"
                         max={new Date().toISOString().split("T")[0]}
                         value={profile.lastPeriodDate || ""}
-                        onChange={(e) => setProfile({ ...profile, lastPeriodDate: e.target.value })}
+                        onChange={(e) =>
+                          setProfile({
+                            ...profile,
+                            lastPeriodDate: e.target.value,
+                          })
+                        }
                       />
                     </div>
                     <div>
@@ -211,7 +252,12 @@ export default function ExpertProfile() {
                       <Input
                         type="number"
                         value={profile.cycleDays || ""}
-                        onChange={(e) => setProfile({ ...profile, cycleDays: Number(e.target.value) })}
+                        onChange={(e) =>
+                          setProfile({
+                            ...profile,
+                            cycleDays: Number(e.target.value),
+                          })
+                        }
                       />
                     </div>
                   </div>
@@ -224,7 +270,12 @@ export default function ExpertProfile() {
                       type="date"
                       max={new Date().toISOString().split("T")[0]}
                       value={profile.childBirthDate || ""}
-                      onChange={(e) => setProfile({ ...profile, childBirthDate: e.target.value })}
+                      onChange={(e) =>
+                        setProfile({
+                          ...profile,
+                          childBirthDate: e.target.value,
+                        })
+                      }
                     />
                   </div>
                 )}
@@ -237,7 +288,9 @@ export default function ExpertProfile() {
               rows={4}
             />
           </div> */}
-              <Button type="submit">Save Changes</Button>
+              <Button type="submit" disabled={disabled}>
+                Save Changes
+              </Button>
             </form>
           </>
         )}
