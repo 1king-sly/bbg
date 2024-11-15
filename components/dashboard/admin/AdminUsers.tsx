@@ -455,7 +455,7 @@ export default function AdminUsers() {
                     {user.hasChild && "Parent"}
                     {!user.isPregnant && !user.hasChild && "Regular"}
                   </TableCell>
-                  <TableCell>{new Date(user.createdAt).toLocaleString()}</TableCell>
+                  <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(user)}>

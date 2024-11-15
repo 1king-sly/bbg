@@ -98,7 +98,6 @@ const Header = () => {
             <Link href="/about">About</Link>
             <Link href="/services">Services</Link>
             <Link href="/events">Events</Link>
-            <Link href="/profiles/1">Girls</Link>
             <Link href="/organizations">Organizations</Link>
             <Link href="/contact">Contact</Link>
           </nav>
@@ -121,7 +120,6 @@ const Header = () => {
               <Link href="/about">About</Link>
             <Link href="/services">Services</Link>
             <Link href="/events">Events</Link>
-            <Link href="/profiles/1">Girls</Link>
             <Link href="/organizations">Organizations</Link>
             <Link href="/contact">Contact</Link>
             {session ? (
