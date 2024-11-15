@@ -8,6 +8,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -143,7 +144,7 @@ const Events = () => {
               <SelectValue placeholder="Select county" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Counties</SelectItem>
+            <SelectLabel>All Counties</SelectLabel>
               <SelectItem value="Nairobi">Nairobi</SelectItem>
               <SelectItem value="Mombasa">Mombasa</SelectItem>
               <SelectItem value="Kisumu">Kisumu</SelectItem>
