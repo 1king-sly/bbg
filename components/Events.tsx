@@ -144,7 +144,6 @@ const Events = () => {
               <SelectValue placeholder="Select county" />
             </SelectTrigger>
             <SelectContent>
-            <SelectLabel>All Counties</SelectLabel>
               <SelectItem value="Nairobi">Nairobi</SelectItem>
               <SelectItem value="Mombasa">Mombasa</SelectItem>
               <SelectItem value="Kisumu">Kisumu</SelectItem>

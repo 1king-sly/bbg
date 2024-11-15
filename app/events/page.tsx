@@ -131,11 +131,10 @@ export default function EventsPage() {
             <SelectValue placeholder="Select county" />
           </SelectTrigger>
           <SelectContent>
-            <SelectLabel>All Counties</SelectLabel>
-            <SelectItem value="Nairobi">Nairobi</SelectItem>
-            <SelectItem value="Mombasa">Mombasa</SelectItem>
-            <SelectItem value="Kisumu">Kisumu</SelectItem>
-            <SelectItem value="Nakuru">Nakuru</SelectItem>
+            <SelectItem value="NAIROBI">Nairobi</SelectItem>
+            <SelectItem value="MOMBASA">Mombasa</SelectItem>
+            <SelectItem value="KISUMU">Kisumu</SelectItem>
+            <SelectItem value="NAKURU">Nakuru</SelectItem>
           </SelectContent>
         </Select>
         <Button onClick={handleFilter}>Filter</Button>
