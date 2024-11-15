@@ -85,7 +85,7 @@ export default function AdminUsers() {
   });
 
   useEffect(()=>{
-    const fetchExperts=async()=>{      
+    const fetchUser=async()=>{      
       try{
         const response = await fetch(`${API_URL}/users`, {
           method: "GET",
@@ -104,7 +104,7 @@ export default function AdminUsers() {
         console.error('Failed to fetch Users',error)
       }
     }
-    fetchExperts();
+    fetchUser();
   },[])
 
   const handleSubmit =async (e: React.FormEvent) => {
@@ -455,7 +455,7 @@ export default function AdminUsers() {
                     {user.hasChild && "Parent"}
                     {!user.isPregnant && !user.hasChild && "Regular"}
                   </TableCell>
-                  <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(user.createdAt).toLocaleString()}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(user)}>

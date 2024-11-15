@@ -294,11 +294,11 @@ export default function AdminExperts() {
     
   };
 
-  // const filteredExperts = experts.filter(expert =>
-  //   expert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   expert.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   expert.fieldOfExpertise.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const filteredExperts = experts.filter(expert =>
+    expert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    expert.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    expert.fieldOfExpertise.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -416,8 +416,8 @@ export default function AdminExperts() {
               </TableRow>
             </TableHeader>
             <TableBody>
-            {Array.isArray(experts) && experts.map((expert,index) =>  (
-                <TableRow key={index}>
+            {filteredExperts.map((expert) =>  (
+                <TableRow key={expert.id}>
                   <TableCell>
                     <div>
                       <p className="font-medium">{expert.name}</p>

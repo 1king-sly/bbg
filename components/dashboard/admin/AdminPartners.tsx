@@ -270,10 +270,10 @@ export default function AdminPartners() {
     // setPartners(partners.filter(partner => partner.id !== partnerId));
   };
 
-  // const filteredPartners = Array.isArray(partners) && partners.filter(partner =>
-  //   partner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   partner.email.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const filteredPartners =partners.filter(partner =>
+    partner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    partner.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -388,7 +388,7 @@ export default function AdminPartners() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {Array.isArray(partners) && partners.map((partner) => (
+              {filteredPartners.map((partner) => (
                 <TableRow key={partner.id}>
                   <TableCell>
                     <div>

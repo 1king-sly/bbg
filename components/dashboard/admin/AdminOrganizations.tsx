@@ -275,10 +275,10 @@ export default function AdminOrganizations() {
    
   };
 
-  // const filteredOrganizations = organizations.filter(org =>
-  //   org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   org.email.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+  const filteredOrganizations = organizations.filter(org =>
+    org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    org.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -397,7 +397,7 @@ export default function AdminOrganizations() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {Array.isArray(organizations) && organizations.map((org) => (
+              {filteredOrganizations.map((org) => (
                 <TableRow key={org.id}>
                   <TableCell>
                     <div>
