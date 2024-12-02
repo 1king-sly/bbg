@@ -25,6 +25,8 @@ import {
 import { Plus, Pencil, Trash, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import Link from "next/link";
+
 
 // Define types for Course and Module
 type Module = {
@@ -286,125 +288,7 @@ export default function AdminCourses() {
             className="pl-8"
           />
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => {
-              setEditingCourse(null);
-              setCourseForm({
-                title: "",
-                description: "",
-                category: "",
-                expertId: 0,
-                expertName: "",
-                partnerId: 0,
-                partnerName: "",
-                organizationId: 0,
-                organizationName: "",
-                maxEnrollments: 0,
-                modules: []
-              });
-            }}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Course
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>{editingCourse ? "Edit Course" : "Create New Course"}</DialogTitle>
-              <DialogDescription>
-                Fill in the course details below.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Title</label>
-                  <Input
-                    value={courseForm.title}
-                    onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Category</label>
-                  <Input
-                    value={courseForm.category}
-                    onChange={(e) => setCourseForm({ ...courseForm, category: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Description</label>
-                <Textarea
-                  value={courseForm.description}
-                  onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Expert</label>
-                  <Input
-                    value={courseForm.expertName}
-                    onChange={(e) => setCourseForm({ ...courseForm, expertName: e.target.value })}
-                    placeholder="Expert Name"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Partner/Organization</label>
-                  <Input
-                    value={courseForm.partnerName || courseForm.organizationName}
-                    onChange={(e) => setCourseForm({ 
-                      ...courseForm, 
-                      partnerName: e.target.value,
-                      organizationName: e.target.value 
-                    })}
-                    placeholder="Partner/Organization Name"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Maximum Enrollments</label>
-                <Input
-                  type="number"
-                  value={courseForm.maxEnrollments}
-                  onChange={(e) => setCourseForm({ ...courseForm, maxEnrollments: Number(e.target.value) })}
-                  required
-                />
-              </div>
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-sm font-medium">Modules</label>
-                  <Button type="button" variant="outline" onClick={handleAddModule}>
-                    Add Module
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  {courseForm.modules.map((module, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        value={module.title}
-                        onChange={(e) => handleModuleChange(index, e.target.value)}
-                        placeholder={`Module ${index + 1} Title`}
-                        required
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveModule(index)}
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <Button type="submit">{editingCourse ? "Update Course" : "Create Course"}</Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+
       </div>
 
       <Card>
@@ -479,12 +363,11 @@ export default function AdminCourses() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(course)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(course.id)}>
-                        <Trash className="h-4 w-4" />
-                      </Button>
+
+                    <Link href="/dashboard/user/courses/1">
+              <Button>View Course</Button>
+            </Link>
+
                     </div>
                   </TableCell>
                 </TableRow>

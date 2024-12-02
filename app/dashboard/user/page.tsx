@@ -237,10 +237,7 @@ export default function Dashboard() {
 
                         <div className="text-right">
                           <span className="text-xs font-semibold inline-block text-pink-600">
-                            {Math.round(
-                              (currentDay / (tracker?.cycleDays || 28)) * 100
-                            )}
-                            %
+                          Day:  {currentDay}
                           </span>
                         </div>
                       </div>

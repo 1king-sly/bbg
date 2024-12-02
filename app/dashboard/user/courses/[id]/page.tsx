@@ -93,16 +93,16 @@ const params = useParams()
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4 flex flex-col gap-2">
+              <div className="space-y-4 flex flex-col gap-2 ">
                 <div>
-                  <div className="flex justify-between mb-2">
+                  <div className="flex justify-between mb-2 ">
                     <span className="text-sm text-muted-foreground">Progress</span>
                     <span className="text-sm font-medium">{module.progress}%</span>
                   </div>
                   <Progress value={module.progress} />
                 </div>
                 {!module.isLocked && (
-                  <Link href={`/courses/${course.id}/module/${module.id}`}>
+                  <Link href={`/dashboard/user/courses/${course.id}/module/${module.id}`}>
                     <Button className="w-full">
                       {module.isCompleted ? 'Review Module' : 'Start Module'}
                     </Button>

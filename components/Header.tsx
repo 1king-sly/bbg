@@ -42,7 +42,7 @@ const Header = () => {
           setDashboardUrl('/dashboard/expert')
           break;
         case "USER":
-          setDashboardUrl('/dashboard')
+          setDashboardUrl('/dashboard/user')
           break;
         default:
           setDashboardUrl('#')

@@ -1,21 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import { Users, BookOpen, Calendar, Building2 } from "lucide-react";
 import AdminOverview from "@/components/dashboard/admin/AdminOverview";
 import AdminUsers from "@/components/dashboard/admin/AdminUsers";
 import AdminExperts from "@/components/dashboard/admin/AdminExperts";

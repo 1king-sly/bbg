@@ -22,8 +22,10 @@ interface QuizModuleProps {
 
 export default function QuizModule({ moduleId, questions, onComplete }: QuizModuleProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [testScore, setTestScore] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
+
   const { toast } = useToast();
 
   const handleAnswer = (answer: number) => {
@@ -44,6 +46,7 @@ export default function QuizModule({ moduleId, questions, onComplete }: QuizModu
     const correctAnswers = questions.filter((q, index) => q.correctAnswer === answers[index]).length;
     const score = (correctAnswers / questions.length) * 100;
     setShowResults(true);
+    setTestScore(score)
     
     if (score >= 70) {
       toast({
@@ -70,13 +73,27 @@ export default function QuizModule({ moduleId, questions, onComplete }: QuizModu
           <p className="text-lg mb-4">
             You got {questions.filter((q, index) => q.correctAnswer === answers[index]).length} out of {questions.length} questions correct.
           </p>
-          <Button onClick={() => {
-            setShowResults(false);
-            setCurrentQuestion(0);
-            setAnswers([]);
-          }}>
-            Try Again
-          </Button>
+
+          {testScore > 70 ?(
+                       <Button onClick={() => {
+                        setShowResults(false);
+                        setCurrentQuestion(0);
+                        setAnswers([]);
+                      }}>
+                        Next Module
+                      </Button>
+          ):(
+
+            <Button onClick={() => {
+              setShowResults(false);
+              setCurrentQuestion(0);
+              setAnswers([]);
+            }}>
+              Try Again
+            </Button>
+          )}
+       
+
         </CardContent>
       </Card>
     );
