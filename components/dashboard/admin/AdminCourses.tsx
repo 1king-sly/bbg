@@ -1,19 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Plus, Pencil, Trash, BookOpen } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,131 +15,231 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash, Search } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
-// Define types for Course and Module
-type Module = {
-  id?: number;
+interface Module {
+  id: number;
   title: string;
-  order: number;
-};
+  content: string;
+  videoUrl?: string;
+  quiz: {
+    questions: {
+      id: number;
+      question: string;
+      options: string[];
+      correctAnswer: number;
+    }[];
+  };
+}
 
-type Course = {
+interface Course {
   id: number;
   title: string;
   description: string;
   category: string;
-  expertId: number | null;
-  expertName: string;
-  partnerId: number | null;
-  partnerName?: string;
-  organizationId: number | null;
-  organizationName?: string;
+  modules: Module[];
   enrollments: number;
   maxEnrollments: number;
   completionRate: number;
-  modules: Module[];
-  status: string;
-};
-
-const dummyCourses: Course[] = [
-
-    {
-      id: 1,
-      title: "Introduction to Web Development",
-      description: "Learn the basics of web development with HTML, CSS, and JavaScript",
-      category: "Technology",
-      expertId: 1,
-      expertName: "Dr. Sarah Johnson",
-      partnerId: 1,
-      partnerName: "TechGirls Foundation",
-      enrollments: 150,
-      maxEnrollments: 200,
-      completionRate: 75,
-      modules: [
-        { id: 1, title: "HTML Basics", order: 1 },
-        { id: 2, title: "CSS Fundamentals", order: 2 },
-        { id: 3, title: "JavaScript Introduction", order: 3 }
-      ],
-      status: "active",
-      organizationId: null
-    },
-    {
-      id: 2,
-      title: "Mental Health Awareness",
-      description: "Understanding mental health and well-being for teenagers",
-      category: "Health",
-      expertId: 2,
-      expertName: "Dr. Michael Chen",
-      organizationId: 1,
-      organizationName: "Youth Development Center",
-      enrollments: 80,
-      maxEnrollments: 100,
-      completionRate: 90,
-      modules: [
-        { id: 1, title: "Understanding Mental Health", order: 1 },
-        { id: 2, title: "Coping Strategies", order: 2 },
-        { id: 3, title: "Seeking Help", order: 3 }
-      ],
-      status: "active",
-      partnerId: null
-    },
-    {
-      id: 3,
-      title: "Financial Literacy for Teens",
-      description: "Essential financial knowledge for young adults",
-      category: "Finance",
-      expertId: 3,
-      expertName: "Prof. Emily Rodriguez",
-      partnerId: 2,
-      partnerName: "Women's Health Initiative",
-      enrollments: 120,
-      maxEnrollments: 150,
-      completionRate: 60,
-      modules: [
-        { id: 1, title: "Budgeting Basics", order: 1 },
-        { id: 2, title: "Saving and Investing", order: 2 },
-        { id: 3, title: "Financial Planning", order: 3 }
-      ],
-      status: "completed",
-      organizationId: null
-    }
- 
-];
+}
 
 export default function AdminCourses() {
   const { toast } = useToast();
-  const [courses, setCourses] = useState<Course[]>(dummyCourses);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [courses, setCourses] = useState<Course[]>([
+    {
+      id: 1,
+      title: "Introduction to Web Development",
+      description:
+        "Learn the fundamentals of web development including HTML, CSS, and JavaScript",
+      category: "Technology",
+      enrollments: 75,
+      maxEnrollments: 100,
+      completionRate: 65,
+      modules: [
+        {
+          id: 1,
+          title: "HTML Fundamentals",
+          content: `
+              # Introduction to HTML
+              
+              HTML (HyperText Markup Language) is the standard markup language for creating web pages.
+              
+              ## Key Concepts:
+              - Document structure
+              - Elements and tags
+              - Attributes
+              - Semantic HTML
+              
+              ## Common Elements:
+              - Headers (\`<h1>\` to \`<h6>\`)
+              - Paragraphs (\`<p>\`)
+              - Lists (\`<ul>\`, \`<ol>\`, \`<li>\`)
+              - Links (\`<a>\`)
+              - Images (\`<img>\`)
+            `,
+          videoUrl: "https://www.youtube.com/embed/qz0aGYrrlhU",
+          quiz: {
+            questions: [
+              {
+                id: 1,
+                question: "What does HTML stand for?",
+                options: [
+                  "HyperText Markup Language",
+                  "High-Level Text Language",
+                  "HyperTransfer Markup Language",
+                  "Home Tool Markup Language",
+                ],
+                correctAnswer: 0,
+              },
+              {
+                id: 2,
+                question: "Which tag is used for creating a hyperlink?",
+                options: ["<link>", "<a>", "<href>", "<url>"],
+                correctAnswer: 1,
+              },
+            ],
+          },
+        },
+        {
+          id: 2,
+          title: "CSS Styling",
+          content: `
+              # Introduction to CSS
+              
+              CSS (Cascading Style Sheets) is used to style and layout web pages.
+              
+              ## Key Concepts:
+              - Selectors
+              - Properties
+              - Values
+              - Box model
+              
+              ## Common Properties:
+              - color
+              - background
+              - margin
+              - padding
+              - display
+            `,
+          videoUrl: "https://www.youtube.com/embed/1PnVor36_40",
+          quiz: {
+            questions: [
+              {
+                id: 1,
+                question: "What does CSS stand for?",
+                options: [
+                  "Computer Style Sheets",
+                  "Creative Style System",
+                  "Cascading Style Sheets",
+                  "Colorful Style Sheets",
+                ],
+                correctAnswer: 2,
+              },
+              {
+                id: 2,
+                question: "Which property is used to change the text color?",
+                options: ["text-color", "font-color", "color", "text-style"],
+                correctAnswer: 2,
+              },
+            ],
+          },
+        },
+      ],
+    },
+    {
+      id: 2,
+      title: "Digital Marketing Essentials",
+      description:
+        "Master the fundamentals of digital marketing and social media strategy",
+      category: "Marketing",
+      enrollments: 45,
+      maxEnrollments: 50,
+      completionRate: 85,
+      modules: [
+        {
+          id: 1,
+          title: "Social Media Marketing",
+          content: `
+              # Introduction to Social Media Marketing
+              
+              Learn how to effectively market your business on social media platforms.
+              
+              ## Key Topics:
+              - Platform selection
+              - Content strategy
+              - Engagement metrics
+              - Paid advertising
+              
+              ## Popular Platforms:
+              - Facebook
+              - Instagram
+              - Twitter
+              - LinkedIn
+            `,
+          videoUrl: "https://www.youtube.com/embed/q8pqDytjlVc",
+          quiz: {
+            questions: [
+              {
+                id: 1,
+                question: "What is engagement rate?",
+                options: [
+                  "Number of followers",
+                  "Number of posts",
+                  "Interaction with content relative to followers",
+                  "Number of advertisements",
+                ],
+                correctAnswer: 2,
+              },
+              {
+                id: 2,
+                question:
+                  "Which metric is most important for measuring social media success?",
+                options: [
+                  "Number of posts",
+                  "Follower count",
+                  "ROI",
+                  "Post frequency",
+                ],
+                correctAnswer: 2,
+              },
+            ],
+          },
+        },
+      ],
+    },
+  ]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-
-  // Define a type for the form state
-  const [courseForm, setCourseForm] = useState<Omit<Course, 'id' | 'enrollments' | 'completionRate' | 'status'>>({
+  const [courseForm, setCourseForm] = useState({
     title: "",
     description: "",
     category: "",
-    expertId: null,
-    expertName: "",
-    partnerId: null,
-    partnerName: "",
-    organizationId: null,
-    organizationName: "",
-    maxEnrollments: 0,
-    modules: [],
+    modules: [] as {
+      title: string;
+      content: string;
+      videoUrl?: string;
+      quiz: {
+        questions: {
+          id: number;
+          question: string;
+          options: string[];
+          correctAnswer: number;
+        }[];
+      };
+    }[],
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (editingCourse) {
-      const updatedCourses = courses.map(course =>
+      const updatedCourses = courses.map((course) =>
         course.id === editingCourse.id
           ? {
               ...course,
-              ...courseForm,
+              title: courseForm.title,
+              description: courseForm.description,
+              category: courseForm.category,
               modules: courseForm.modules.map((module, index) => ({
                 id: index + 1,
                 ...module,
@@ -160,16 +253,18 @@ export default function AdminCourses() {
         description: "The course has been successfully updated.",
       });
     } else {
-      const newCourse: Course = {
+      const newCourse = {
         id: courses.length + 1,
-        ...courseForm,
-        enrollments: 0,
-        completionRate: 0,
+        title: courseForm.title,
+        description: courseForm.description,
+        category: courseForm.category,
         modules: courseForm.modules.map((module, index) => ({
           id: index + 1,
           ...module,
         })),
-        status: "active",
+        enrollments: 0,
+        maxEnrollments: 100,
+        completionRate: 0,
       };
       setCourses([...courses, newCourse]);
       toast({
@@ -184,13 +279,6 @@ export default function AdminCourses() {
       title: "",
       description: "",
       category: "",
-      expertId: null,
-      expertName: "",
-      partnerId: null,
-      partnerName: "",
-      organizationId: null,
-      organizationName: "",
-      maxEnrollments: 0,
       modules: [],
     });
   };
@@ -200,14 +288,61 @@ export default function AdminCourses() {
       ...courseForm,
       modules: [
         ...courseForm.modules,
-        { title: "", order: courseForm.modules.length + 1 },
+        {
+          title: "",
+          content: "",
+          videoUrl: "",
+          quiz: {
+            questions: [],
+          },
+        },
       ],
     });
   };
 
-  const handleModuleChange = (index: number, value: string) => {
+  const handleAddQuestion = (moduleIndex: number) => {
     const updatedModules = [...courseForm.modules];
-    updatedModules[index] = { ...updatedModules[index], title: value };
+    updatedModules[moduleIndex].quiz.questions.push({
+      id: updatedModules[moduleIndex].quiz.questions.length + 1,
+      question: "",
+      options: ["", "", "", ""],
+      correctAnswer: 0,
+    });
+    setCourseForm({
+      ...courseForm,
+      modules: updatedModules,
+    });
+  };
+
+  const handleModuleChange = (index: number, field: string, value: string) => {
+    const updatedModules = [...courseForm.modules];
+    updatedModules[index] = {
+      ...updatedModules[index],
+      [field]: value,
+    };
+    setCourseForm({
+      ...courseForm,
+      modules: updatedModules,
+    });
+  };
+
+  const handleQuestionChange = (
+    moduleIndex: number,
+    questionIndex: number,
+    field: string,
+    value: string | number
+  ) => {
+    const updatedModules = [...courseForm.modules];
+    if (field === "options") {
+      const optionIndex = parseInt(value.toString());
+      updatedModules[moduleIndex].quiz.questions[questionIndex].correctAnswer =
+        optionIndex;
+    } else {
+      updatedModules[moduleIndex].quiz.questions[questionIndex] = {
+        ...updatedModules[moduleIndex].quiz.questions[questionIndex],
+        [field]: value,
+      };
+    }
     setCourseForm({
       ...courseForm,
       modules: updatedModules,
@@ -215,113 +350,62 @@ export default function AdminCourses() {
   };
 
   const handleRemoveModule = (index: number) => {
-    const updatedModules = courseForm.modules
-      .filter((_, i) => i !== index)
-      .map((module, i) => ({ ...module, order: i + 1 }));
+    const updatedModules = courseForm.modules.filter((_, i) => i !== index);
     setCourseForm({
       ...courseForm,
       modules: updatedModules,
     });
   };
 
-  const handleEdit = (course: Course) => {
-    setEditingCourse(course);
+  const handleRemoveQuestion = (moduleIndex: number, questionIndex: number) => {
+    const updatedModules = [...courseForm.modules];
+    updatedModules[moduleIndex].quiz.questions = updatedModules[
+      moduleIndex
+    ].quiz.questions.filter((_, i) => i !== questionIndex);
     setCourseForm({
-      title: course.title,
-      description: course.description,
-      category: course.category,
-      expertId: course.expertId,
-      expertName: course.expertName,
-      partnerId: course.partnerId || null,
-      partnerName: course.partnerName || "",
-      organizationId: course.organizationId || null,
-      organizationName: course.organizationName || "",
-      maxEnrollments: course.maxEnrollments,
-      modules: course.modules.map(({ title, order }) => ({
-        title,
-        order,
-      })),
-    });
-    setIsDialogOpen(true);
-  };
-
-  const handleDelete = (courseId: number) => {
-    setCourses(courses.filter(course => course.id !== courseId));
-    toast({
-      title: "Course Deleted",
-      description: "The course has been successfully deleted.",
+      ...courseForm,
+      modules: updatedModules,
     });
   };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge variant="secondary">Active</Badge>;
-      case "completed":
-        return <Badge>Completed</Badge>;
-      case "draft":
-        return <Badge variant="outline">Draft</Badge>;
-      default:
-        return null;
-    }
-  };
-
-  const filteredCourses = courses.filter(course =>
-    course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    course.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    course.expertName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (course.partnerName && course.partnerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (course.organizationName && course.organizationName.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div className="relative w-64">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search courses..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
-        </div>
+        <h2 className="text-2xl font-bold">Your Courses</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => {
-              setEditingCourse(null);
-              setCourseForm({
-                title: "",
-                description: "",
-                category: "",
-                expertId: 0,
-                expertName: "",
-                partnerId: 0,
-                partnerName: "",
-                organizationId: 0,
-                organizationName: "",
-                maxEnrollments: 0,
-                modules: []
-              });
-            }}>
+            <Button
+              onClick={() => {
+                setEditingCourse(null);
+                setCourseForm({
+                  title: "",
+                  description: "",
+                  category: "",
+                  modules: [],
+                });
+              }}>
               <Plus className="h-4 w-4 mr-2" />
-              Add Course
+              Create Course
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingCourse ? "Edit Course" : "Create New Course"}</DialogTitle>
+              <DialogTitle>
+                {editingCourse ? "Edit Course" : "Create New Course"}
+              </DialogTitle>
               <DialogDescription>
-                Fill in the course details below.
+                Fill in the course details and add modules below.
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">Title</label>
                   <Input
                     value={courseForm.title}
-                    onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })}
+                    onChange={(e) =>
+                      setCourseForm({ ...courseForm, title: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -329,7 +413,9 @@ export default function AdminCourses() {
                   <label className="text-sm font-medium">Category</label>
                   <Input
                     value={courseForm.category}
-                    onChange={(e) => setCourseForm({ ...courseForm, category: e.target.value })}
+                    onChange={(e) =>
+                      setCourseForm({ ...courseForm, category: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -338,161 +424,257 @@ export default function AdminCourses() {
                 <label className="text-sm font-medium">Description</label>
                 <Textarea
                   value={courseForm.description}
-                  onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })}
+                  onChange={(e) =>
+                    setCourseForm({
+                      ...courseForm,
+                      description: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Expert</label>
-                  <Input
-                    value={courseForm.expertName}
-                    onChange={(e) => setCourseForm({ ...courseForm, expertName: e.target.value })}
-                    placeholder="Expert Name"
-                  />
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-medium">Modules</h3>
                 </div>
-                <div>
-                  <label className="text-sm font-medium">Partner/Organization</label>
-                  <Input
-                    value={courseForm.partnerName || courseForm.organizationName}
-                    onChange={(e) => setCourseForm({ 
-                      ...courseForm, 
-                      partnerName: e.target.value,
-                      organizationName: e.target.value 
-                    })}
-                    placeholder="Partner/Organization Name"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Maximum Enrollments</label>
-                <Input
-                  type="number"
-                  value={courseForm.maxEnrollments}
-                  onChange={(e) => setCourseForm({ ...courseForm, maxEnrollments: Number(e.target.value) })}
-                  required
-                />
-              </div>
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-sm font-medium">Modules</label>
-                  <Button type="button" variant="outline" onClick={handleAddModule}>
+
+                {courseForm.modules.map((module, moduleIndex) => (
+                  <Card key={moduleIndex}>
+                    <CardHeader>
+                      <CardTitle className="flex justify-between">
+                        <span>Module {moduleIndex + 1}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveModule(moduleIndex)}>
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <Input
+                        placeholder="Module Title"
+                        value={module.title}
+                        onChange={(e) =>
+                          handleModuleChange(
+                            moduleIndex,
+                            "title",
+                            e.target.value
+                          )
+                        }
+                        required
+                      />
+                      <Textarea
+                        placeholder="Module Content"
+                        value={module.content}
+                        onChange={(e) =>
+                          handleModuleChange(
+                            moduleIndex,
+                            "content",
+                            e.target.value
+                          )
+                        }
+                        required
+                      />
+                      <Input
+                        placeholder="Video URL (optional)"
+                        value={module.videoUrl}
+                        onChange={(e) =>
+                          handleModuleChange(
+                            moduleIndex,
+                            "videoUrl",
+                            e.target.value
+                          )
+                        }
+                      />
+
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-medium">Quiz Questions</h4>
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => handleAddQuestion(moduleIndex)}>
+                            Add Question
+                          </Button>
+                        </div>
+
+                        {module.quiz.questions.map(
+                          (question, questionIndex) => (
+                            <Card key={questionIndex}>
+                              <CardContent className="space-y-4 pt-4">
+                                <div className="flex justify-between items-start">
+                                  <Input
+                                    placeholder="Question"
+                                    value={question.question}
+                                    onChange={(e) =>
+                                      handleQuestionChange(
+                                        moduleIndex,
+                                        questionIndex,
+                                        "question",
+                                        e.target.value
+                                      )
+                                    }
+                                    required
+                                  />
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() =>
+                                      handleRemoveQuestion(
+                                        moduleIndex,
+                                        questionIndex
+                                      )
+                                    }>
+                                    <Trash className="h-4 w-4" />
+                                  </Button>
+                                </div>
+
+                                {question.options.map((option, optionIndex) => (
+                                  <div
+                                    key={optionIndex}
+                                    className="flex items-center gap-2">
+                                    <Input
+                                      placeholder={`Option ${optionIndex + 1}`}
+                                      value={option}
+                                      onChange={(e) => {
+                                        const updatedModules = [
+                                          ...courseForm.modules,
+                                        ];
+                                        updatedModules[
+                                          moduleIndex
+                                        ].quiz.questions[questionIndex].options[
+                                          optionIndex
+                                        ] = e.target.value;
+                                        setCourseForm({
+                                          ...courseForm,
+                                          modules: updatedModules,
+                                        });
+                                      }}
+                                      required
+                                    />
+                                    <input
+                                      title="Correct Answer"
+                                      type="radio"
+                                      name={`correct-answer-${moduleIndex}-${questionIndex}`}
+                                      checked={
+                                        question.correctAnswer === optionIndex
+                                      }
+                                      onChange={() =>
+                                        handleQuestionChange(
+                                          moduleIndex,
+                                          questionIndex,
+                                          "options",
+                                          optionIndex
+                                        )
+                                      }
+                                      required
+                                    />
+                                  </div>
+                                ))}
+                              </CardContent>
+                            </Card>
+                          )
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                <div className="w-full flex justify-end">
+                  <Button type="button" onClick={handleAddModule}>
                     Add Module
                   </Button>
                 </div>
-                <div className="space-y-2">
-                  {courseForm.modules.map((module, index) => (
-                    <div key={index} className="flex gap-2">
-                      <Input
-                        value={module.title}
-                        onChange={(e) => handleModuleChange(index, e.target.value)}
-                        placeholder={`Module ${index + 1} Title`}
-                        required
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveModule(index)}
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
               </div>
-              <Button type="submit">{editingCourse ? "Update Course" : "Create Course"}</Button>
+
+              <Button type="submit">
+                {editingCourse ? "Update Course" : "Create Course"}
+              </Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Courses</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Course Details</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Progress</TableHead>
-                <TableHead>Instructors</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredCourses.map((course) => (
-                <TableRow key={course.id}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{course.title}</p>
-                      <p className="text-sm text-muted-foreground">{course.description}</p>
-                      <div className="mt-2">
-                        <p className="text-sm font-medium">Modules ({course.modules.length})</p>
-                        <ul className="text-sm text-muted-foreground">
-                          {course.modules.map((module) => (
-                            <li key={module.id}>{module.title}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{course.category}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Enrollment</span>
-                        <span className="text-sm font-medium">
-                          {course.enrollments}/{course.maxEnrollments}
-                        </span>
-                      </div>
-                      <Progress value={(course.enrollments / course.maxEnrollments) * 100} />
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Completion</span>
-                        <span className="text-sm font-medium">
-                          {course.completionRate}%
-                        </span>
-                      </div>
-                      <Progress value={course.completionRate} />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      {course.expertName && (
-                        <p className="text-sm">Expert: {course.expertName}</p>
-                      )}
-                      {course.partnerName && (
-                        <p className="text-sm">Partner: {course.partnerName}</p>
-                      )}
-                      {course.organizationName && (
-                        <p className="text-sm">Org: {course.organizationName}</p>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {getStatusBadge(course.status)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(course)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(course.id)}>
-                        <Trash className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {courses.map((course) => (
+          <Card key={course.id}>
+            <CardHeader>
+              <CardTitle className="flex justify-between items-start">
+                <span>{course.title}</span>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setEditingCourse(course);
+                      setCourseForm({
+                        title: course.title,
+                        description: course.description,
+                        category: course.category,
+                        modules: course.modules.map(
+                          ({ id, ...module }) => module
+                        ),
+                      });
+                      setIsDialogOpen(true);
+                    }}>
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setCourses(courses.filter((c) => c.id !== course.id));
+                      toast({
+                        title: "Course Deleted",
+                        description:
+                          "The course has been successfully deleted.",
+                      });
+                    }}>
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4">{course.description}</p>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">
+                    Category: {course.category}
+                  </span>
+                  <div className="flex items-center">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    <span className="text-sm">
+                      {course.modules.length} Modules
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Enrollments</span>
+                    <span className="text-sm">
+                      {course.enrollments}/{course.maxEnrollments}
+                    </span>
+                  </div>
+                  <Progress
+                    value={(course.enrollments / course.maxEnrollments) * 100}
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Completion Rate</span>
+                    <span className="text-sm">{course.completionRate}%</span>
+                  </div>
+                  <Progress value={course.completionRate} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
