@@ -50,7 +50,7 @@ const Events = () => {
       const access_token = localStorage.getItem("accessToken");
 
       try {
-        const response = await fetch(`${API_URL}/events/`, {
+        const response = await fetch(`${API_URL}/events/upcoming`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

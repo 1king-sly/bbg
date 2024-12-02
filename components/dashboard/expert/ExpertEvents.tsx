@@ -275,6 +275,7 @@ const handleDelete =async (eventId: number) => {
                 <Input
                   type="date"
                   value={eventForm.date}
+                  min={new Date().toISOString().split("T")[0]}
                   onChange={(e) =>
                     setEventForm({ ...eventForm, date: e.target.value })
                   }
