@@ -1,54 +1,139 @@
 "use client";
 
-import { useState } from 'react';
+import { useState,useEffect} from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Book, Code, LineChart } from "lucide-react";
+import SkeletonCard from '@/components/skeleton/SkeletonCard';
+import { useToast } from "@/hooks/use-toast";
 
-const courses = [
-  {
-    id: 1,
-    title: "Software Engineering Fundamentals",
-    category: "IT",
-    description: "Learn the basics of software development and engineering principles",
-    icon: Code,
-    modules: [
-      "Introduction to Programming",
-      "Data Structures and Algorithms",
-      "Web Development Basics"
-    ]
-  },
-  {
-    id: 2,
-    title: "Digital Content Writing",
-    category: "Business",
-    description: "Master the art of creating compelling digital content",
-    icon: Book,
-    modules: [
-      "Content Strategy",
-      "SEO Writing",
-      "Social Media Content"
-    ]
-  },
-  {
-    id: 3,
-    title: "Digital Marketing",
-    category: "Business",
-    description: "Learn modern marketing techniques for the digital age",
-    icon: LineChart,
-    modules: [
-      "Marketing Fundamentals",
-      "Social Media Marketing",
-      "Email Marketing"
-    ]
-  }
-];
+
+interface Module {
+  id: number;
+  title: string;
+  content: string;
+  videoUrl?: string;
+  Quiz: {
+    questions: {
+      id: number;
+      question: string;
+      options: string[];
+      correctAnswer: number;
+    }[];
+  };
+}
+
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  modules: Module[];
+  enrollments: [];
+  maxEnrollments: number;
+  completionRate: number;
+}
 
 const categories = ["All", "IT", "Business", "Accounting"];
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const access_token = localStorage.getItem("accessToken");
+
+
+
+
+
 export default function CoursesPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setIsLoading] = useState(true);
+  const [disabled, setDisabled] = useState(false);
+  const { toast } = useToast();
+
+
+
+  const fetchCourses = async () => {
+    try {
+      const response = await fetch(`${API_URL}/courses`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setCourses(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch User courses", error);
+    }
+
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+
+  const enrolCourse = async (id: number) => {
+    setDisabled(true);
+
+    try {
+      const response = await fetch(`${API_URL}/enrollments/courses/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Action Successful",
+          description: "Successfully rsvp for event",
+        });
+      }
+
+      if (response.status === 402) {
+        toast({
+          title: "Action Failed",
+          description: "You already rsvp'd for event",
+          variant: "destructive",
+        });
+      }
+      if (response.status === 401) {
+        toast({
+          title: "Action Failed",
+          description: "Kindly login or create account to RSVP",
+          variant: "destructive",
+        });
+      }
+
+      if (!response.ok && response.status !== 402 && response.status !== 401) {
+        toast({
+          title: "Action Failed",
+          description: "Failed to rsvp for event",
+          variant: "destructive",
+        });
+      }
+
+      setDisabled(false);
+    } catch (error: any) {
+      console.error("An error occurred", error);
+      toast({
+        title: "Action Failed",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+
+      setDisabled(false);
+    }
+  };
+  
+
   
   const filteredCourses = selectedCategory === "All" 
     ? courses 
@@ -73,11 +158,20 @@ export default function CoursesPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        {loading && (
+          <>
+                  {[...Array(6)].map((_, index) => (
+          <SkeletonCard key={index} />
+        ))}
+
+          </>
+        )}
         {filteredCourses.map((course) => (
           <Card key={course.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <course.icon className="h-6 w-6 text-primary" />
+                <Book className="h-6 w-6 text-primary" />
                 <CardTitle>{course.title}</CardTitle>
               </div>
             </CardHeader>
@@ -87,11 +181,11 @@ export default function CoursesPage() {
                 <p className="font-semibold">Modules:</p>
                 <ul className="list-disc list-inside space-y-1">
                   {course.modules.map((module, index) => (
-                    <li key={index}>{module}</li>
+                    <li key={index}>{module.title}</li>
                   ))}
                 </ul>
               </div>
-              <Button className="mt-4 w-full">Enroll Now</Button>
+              <Button onClick={() => enrolCourse(course.id)} disabled={disabled} className="mt-4 w-full">Enroll Now</Button>
             </CardContent>
           </Card>
         ))}

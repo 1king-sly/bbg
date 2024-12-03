@@ -216,23 +216,6 @@ const handleDelete =async (eventId: number) => {
   }
 
 };
-
-
-// const SkeletonCard = () => (
-//   <Card >
-//     <CardHeader>
-//       <Skeleton width="70%" height="1.5rem" className="mb-2" />
-//       <Skeleton width="40%" height="1rem" />
-//     </CardHeader>
-//     <CardContent>
-//       <Skeleton height="1.5rem" className="mb-2" />
-//       <Skeleton height="1.5rem" className="mb-2" />
-//       <Skeleton height="1.5rem" className="mb-2" />
-//       <Skeleton width="50%" height="1rem" />
-//     </CardContent>
-//   </Card>
-// );
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
