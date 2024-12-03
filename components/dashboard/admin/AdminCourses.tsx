@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,13 +16,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from 'primereact/skeleton';
+
 
 interface Module {
   id: number;
   title: string;
   content: string;
   videoUrl?: string;
-  quiz: {
+  Quiz: {
     questions: {
       id: number;
       question: string;
@@ -38,176 +40,19 @@ interface Course {
   description: string;
   category: string;
   modules: Module[];
-  enrollments: number;
+  enrollments: [];
   maxEnrollments: number;
   completionRate: number;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function AdminCourses() {
   const { toast } = useToast();
-  const [courses, setCourses] = useState<Course[]>([
-    {
-      id: 1,
-      title: "Introduction to Web Development",
-      description:
-        "Learn the fundamentals of web development including HTML, CSS, and JavaScript",
-      category: "Technology",
-      enrollments: 75,
-      maxEnrollments: 100,
-      completionRate: 65,
-      modules: [
-        {
-          id: 1,
-          title: "HTML Fundamentals",
-          content: `
-              # Introduction to HTML
-              
-              HTML (HyperText Markup Language) is the standard markup language for creating web pages.
-              
-              ## Key Concepts:
-              - Document structure
-              - Elements and tags
-              - Attributes
-              - Semantic HTML
-              
-              ## Common Elements:
-              - Headers (\`<h1>\` to \`<h6>\`)
-              - Paragraphs (\`<p>\`)
-              - Lists (\`<ul>\`, \`<ol>\`, \`<li>\`)
-              - Links (\`<a>\`)
-              - Images (\`<img>\`)
-            `,
-          videoUrl: "https://www.youtube.com/embed/qz0aGYrrlhU",
-          quiz: {
-            questions: [
-              {
-                id: 1,
-                question: "What does HTML stand for?",
-                options: [
-                  "HyperText Markup Language",
-                  "High-Level Text Language",
-                  "HyperTransfer Markup Language",
-                  "Home Tool Markup Language",
-                ],
-                correctAnswer: 0,
-              },
-              {
-                id: 2,
-                question: "Which tag is used for creating a hyperlink?",
-                options: ["<link>", "<a>", "<href>", "<url>"],
-                correctAnswer: 1,
-              },
-            ],
-          },
-        },
-        {
-          id: 2,
-          title: "CSS Styling",
-          content: `
-              # Introduction to CSS
-              
-              CSS (Cascading Style Sheets) is used to style and layout web pages.
-              
-              ## Key Concepts:
-              - Selectors
-              - Properties
-              - Values
-              - Box model
-              
-              ## Common Properties:
-              - color
-              - background
-              - margin
-              - padding
-              - display
-            `,
-          videoUrl: "https://www.youtube.com/embed/1PnVor36_40",
-          quiz: {
-            questions: [
-              {
-                id: 1,
-                question: "What does CSS stand for?",
-                options: [
-                  "Computer Style Sheets",
-                  "Creative Style System",
-                  "Cascading Style Sheets",
-                  "Colorful Style Sheets",
-                ],
-                correctAnswer: 2,
-              },
-              {
-                id: 2,
-                question: "Which property is used to change the text color?",
-                options: ["text-color", "font-color", "color", "text-style"],
-                correctAnswer: 2,
-              },
-            ],
-          },
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Digital Marketing Essentials",
-      description:
-        "Master the fundamentals of digital marketing and social media strategy",
-      category: "Marketing",
-      enrollments: 45,
-      maxEnrollments: 50,
-      completionRate: 85,
-      modules: [
-        {
-          id: 1,
-          title: "Social Media Marketing",
-          content: `
-              # Introduction to Social Media Marketing
-              
-              Learn how to effectively market your business on social media platforms.
-              
-              ## Key Topics:
-              - Platform selection
-              - Content strategy
-              - Engagement metrics
-              - Paid advertising
-              
-              ## Popular Platforms:
-              - Facebook
-              - Instagram
-              - Twitter
-              - LinkedIn
-            `,
-          videoUrl: "https://www.youtube.com/embed/q8pqDytjlVc",
-          quiz: {
-            questions: [
-              {
-                id: 1,
-                question: "What is engagement rate?",
-                options: [
-                  "Number of followers",
-                  "Number of posts",
-                  "Interaction with content relative to followers",
-                  "Number of advertisements",
-                ],
-                correctAnswer: 2,
-              },
-              {
-                id: 2,
-                question:
-                  "Which metric is most important for measuring social media success?",
-                options: [
-                  "Number of posts",
-                  "Follower count",
-                  "ROI",
-                  "Post frequency",
-                ],
-                correctAnswer: 2,
-              },
-            ],
-          },
-        },
-      ],
-    },
-  ]);
+  const [disabled, setDisabled] = useState(false);
+  const [loading, setIsLoading] = useState(true);
+
+  const [courses, setCourses] = useState<Course[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [courseForm, setCourseForm] = useState({
@@ -218,9 +63,8 @@ export default function AdminCourses() {
       title: string;
       content: string;
       videoUrl?: string;
-      quiz: {
+      Quiz: {
         questions: {
-          id: number;
           question: string;
           options: string[];
           correctAnswer: number;
@@ -229,8 +73,36 @@ export default function AdminCourses() {
     }[],
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const access_token = localStorage.getItem("accessToken");
+
+  const fetchCourses = async () => {
+    try {
+      const response = await fetch(`${API_URL}/courses/created`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setCourses(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch User courses", error);
+    }
+
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    setDisabled(true);
 
     if (editingCourse) {
       const updatedCourses = courses.map((course) =>
@@ -241,46 +113,77 @@ export default function AdminCourses() {
               description: courseForm.description,
               category: courseForm.category,
               modules: courseForm.modules.map((module, index) => ({
-                id: index + 1,
                 ...module,
               })),
             }
           : course
       );
-      setCourses(updatedCourses);
+      // setCourses(updatedCourses);
       toast({
         title: "Course Updated",
         description: "The course has been successfully updated.",
       });
     } else {
       const newCourse = {
-        id: courses.length + 1,
+        // id: courses.length + 1,
         title: courseForm.title,
         description: courseForm.description,
         category: courseForm.category,
         modules: courseForm.modules.map((module, index) => ({
-          id: index + 1,
+          order: index,
           ...module,
         })),
-        enrollments: 0,
-        maxEnrollments: 100,
-        completionRate: 0,
+        max_enrollments: 100,
       };
-      setCourses([...courses, newCourse]);
-      toast({
-        title: "Course Created",
-        description: "The new course has been created successfully.",
-      });
-    }
 
-    setIsDialogOpen(false);
-    setEditingCourse(null);
-    setCourseForm({
-      title: "",
-      description: "",
-      category: "",
-      modules: [],
-    });
+      try {
+        const response = await fetch(`${API_URL}/courses`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+          body: JSON.stringify(newCourse),
+        });
+
+        const newCourseCreated = await response.json();
+
+        if (response.ok) {
+          toast({
+            title: "Action Successful",
+            description: "Course Successfully created",
+          });
+
+          setCourses([...courses, newCourseCreated]);
+
+          setIsDialogOpen(false);
+          setEditingCourse(null);
+          setCourseForm({
+            title: "",
+            description: "",
+            category: "",
+            modules: [],
+          });
+        }
+
+        if (!response.ok) {
+          toast({
+            title: "Action Failed",
+            description: "Failed to create  Course",
+            variant: "destructive",
+          });
+        }
+        setDisabled(false);
+      } catch (error: any) {
+        console.error(error);
+
+        toast({
+          title: "Action Failed",
+          description: "Failed to create  Course",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   const handleAddModule = () => {
@@ -292,7 +195,7 @@ export default function AdminCourses() {
           title: "",
           content: "",
           videoUrl: "",
-          quiz: {
+          Quiz: {
             questions: [],
           },
         },
@@ -302,8 +205,7 @@ export default function AdminCourses() {
 
   const handleAddQuestion = (moduleIndex: number) => {
     const updatedModules = [...courseForm.modules];
-    updatedModules[moduleIndex].quiz.questions.push({
-      id: updatedModules[moduleIndex].quiz.questions.length + 1,
+    updatedModules[moduleIndex].Quiz.questions.push({
       question: "",
       options: ["", "", "", ""],
       correctAnswer: 0,
@@ -335,11 +237,11 @@ export default function AdminCourses() {
     const updatedModules = [...courseForm.modules];
     if (field === "options") {
       const optionIndex = parseInt(value.toString());
-      updatedModules[moduleIndex].quiz.questions[questionIndex].correctAnswer =
+      updatedModules[moduleIndex].Quiz.questions[questionIndex].correctAnswer =
         optionIndex;
     } else {
-      updatedModules[moduleIndex].quiz.questions[questionIndex] = {
-        ...updatedModules[moduleIndex].quiz.questions[questionIndex],
+      updatedModules[moduleIndex].Quiz.questions[questionIndex] = {
+        ...updatedModules[moduleIndex].Quiz.questions[questionIndex],
         [field]: value,
       };
     }
@@ -359,22 +261,39 @@ export default function AdminCourses() {
 
   const handleRemoveQuestion = (moduleIndex: number, questionIndex: number) => {
     const updatedModules = [...courseForm.modules];
-    updatedModules[moduleIndex].quiz.questions = updatedModules[
+    updatedModules[moduleIndex].Quiz.questions = updatedModules[
       moduleIndex
-    ].quiz.questions.filter((_, i) => i !== questionIndex);
+    ].Quiz.questions.filter((_, i) => i !== questionIndex);
     setCourseForm({
       ...courseForm,
       modules: updatedModules,
     });
   };
 
+  const SkeletonCard = () => (
+    <Card >
+      <CardHeader>
+        <Skeleton width="70%" height="1.5rem" className="mb-2" />
+        <Skeleton width="40%" height="1rem" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton height="1.5rem" className="mb-2" />
+        <Skeleton height="1.5rem" className="mb-2" />
+        <Skeleton height="1.5rem" className="mb-2" />
+        <Skeleton width="50%" height="1rem" />
+      </CardContent>
+    </Card>
+  );
+
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mx-2">
         <h2 className="text-2xl font-bold">Your Courses</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
+              disabled={disabled}
               onClick={() => {
                 setEditingCourse(null);
                 setCourseForm({
@@ -484,7 +403,7 @@ export default function AdminCourses() {
                         onChange={(e) =>
                           handleModuleChange(
                             moduleIndex,
-                            "videoUrl",
+                            "VideoUrl",
                             e.target.value
                           )
                         }
@@ -494,6 +413,7 @@ export default function AdminCourses() {
                         <div className="flex justify-between items-center">
                           <h4 className="font-medium">Quiz Questions</h4>
                           <Button
+                            disabled={disabled}
                             type="button"
                             size="sm"
                             onClick={() => handleAddQuestion(moduleIndex)}>
@@ -501,7 +421,7 @@ export default function AdminCourses() {
                           </Button>
                         </div>
 
-                        {module.quiz.questions.map(
+                        {module.Quiz?.questions.map(
                           (question, questionIndex) => (
                             <Card key={questionIndex}>
                               <CardContent className="space-y-4 pt-4">
@@ -520,6 +440,7 @@ export default function AdminCourses() {
                                     required
                                   />
                                   <Button
+                                    disabled={disabled}
                                     type="button"
                                     variant="ghost"
                                     size="sm"
@@ -546,7 +467,7 @@ export default function AdminCourses() {
                                         ];
                                         updatedModules[
                                           moduleIndex
-                                        ].quiz.questions[questionIndex].options[
+                                        ].Quiz.questions[questionIndex].options[
                                           optionIndex
                                         ] = e.target.value;
                                         setCourseForm({
@@ -584,13 +505,16 @@ export default function AdminCourses() {
                   </Card>
                 ))}
                 <div className="w-full flex justify-end">
-                  <Button type="button" onClick={handleAddModule}>
+                  <Button
+                    disabled={disabled}
+                    type="button"
+                    onClick={handleAddModule}>
                     Add Module
                   </Button>
                 </div>
               </div>
 
-              <Button type="submit">
+              <Button disabled={disabled} type="submit">
                 {editingCourse ? "Update Course" : "Create Course"}
               </Button>
             </form>
@@ -598,14 +522,22 @@ export default function AdminCourses() {
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {courses.map((course) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mx-2">
+        {loading && (
+        <>
+        {[...Array(4)].map((_, index) => (
+          <SkeletonCard key={index} />
+        ))}
+      </>     
+        )}
+        {courses?.map((course) => (
           <Card key={course.id}>
             <CardHeader>
               <CardTitle className="flex justify-between items-start">
                 <span>{course.title}</span>
                 <div className="flex gap-2">
                   <Button
+                    disabled={disabled}
                     variant="ghost"
                     size="icon"
                     onClick={() => {
@@ -623,6 +555,7 @@ export default function AdminCourses() {
                     <Pencil className="h-4 w-4" />
                   </Button>
                   <Button
+                    disabled={disabled}
                     variant="ghost"
                     size="icon"
                     onClick={() => {
@@ -656,11 +589,13 @@ export default function AdminCourses() {
                   <div className="flex justify-between mb-2">
                     <span className="text-sm font-medium">Enrollments</span>
                     <span className="text-sm">
-                      {course.enrollments}/{course.maxEnrollments}
+                      {course.enrollments.length} People
                     </span>
                   </div>
                   <Progress
-                    value={(course.enrollments / course.maxEnrollments) * 100}
+                    value={
+                      (course.enrollments.length / course.maxEnrollments) * 100
+                    }
                   />
                 </div>
                 <div>

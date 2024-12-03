@@ -15,6 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Skeleton } from 'primereact/skeleton';
+import SkeletonCard from "@/components/skeleton/SkeletonCard";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -36,6 +38,7 @@ export default function ExpertEvents() {
   const [events, setEvents] = useState<Event[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<any>(null);
+  const [loading, setIsLoading] = useState(true);
   const [eventForm, setEventForm] = useState({
     title: "",
     description: "",
@@ -72,6 +75,9 @@ export default function ExpertEvents() {
       }catch(error){
         console.error('Failed to fetch Events',error)
       }
+
+      setIsLoading(false)
+
     }
     fetchEvents();
   },[])
@@ -211,13 +217,21 @@ const handleDelete =async (eventId: number) => {
 
 };
 
-  // const handleDelete = (eventId: number) => {
-  //   setEvents(events.filter((event) => event.id !== eventId));
-  //   toast({
-  //     title: "Event Deleted",
-  //     description: "The event has been successfully deleted.",
-  //   });
-  // };
+
+// const SkeletonCard = () => (
+//   <Card >
+//     <CardHeader>
+//       <Skeleton width="70%" height="1.5rem" className="mb-2" />
+//       <Skeleton width="40%" height="1rem" />
+//     </CardHeader>
+//     <CardContent>
+//       <Skeleton height="1.5rem" className="mb-2" />
+//       <Skeleton height="1.5rem" className="mb-2" />
+//       <Skeleton height="1.5rem" className="mb-2" />
+//       <Skeleton width="50%" height="1rem" />
+//     </CardContent>
+//   </Card>
+// );
 
   return (
     <div className="space-y-6">
@@ -312,6 +326,14 @@ const handleDelete =async (eventId: number) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      {loading && (
+        <>
+        {[...Array(4)].map((_, index) => (
+          <SkeletonCard key={index} />
+        ))}
+      </>     
+        )}
         {events.map((event) => (
           <Card key={event.id}>
             <CardHeader>
