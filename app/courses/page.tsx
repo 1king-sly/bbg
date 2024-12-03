@@ -38,7 +38,6 @@ interface Course {
 const categories = ["All", "IT", "Business", "Accounting"];
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const access_token = localStorage.getItem("accessToken");
 
 
 
@@ -50,6 +49,8 @@ export default function CoursesPage() {
   const [loading, setIsLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const { toast } = useToast();
+
+
 
 
 
@@ -80,6 +81,8 @@ export default function CoursesPage() {
 
   const enrolCourse = async (id: number) => {
     setDisabled(true);
+    const access_token = localStorage.getItem("accessToken");
+
 
     try {
       const response = await fetch(`${API_URL}/enrollments/courses/${id}`, {
@@ -90,24 +93,27 @@ export default function CoursesPage() {
         },
       });
 
+      const data = await response.json()
+
+
       if (response.ok) {
         toast({
           title: "Action Successful",
-          description: "Successfully rsvp for event",
+          description: "Successfully enrolled for corse",
         });
       }
 
       if (response.status === 402) {
         toast({
           title: "Action Failed",
-          description: "You already rsvp'd for event",
+          description: "You already Enrolled for course",
           variant: "destructive",
         });
       }
       if (response.status === 401) {
         toast({
           title: "Action Failed",
-          description: "Kindly login or create account to RSVP",
+          description: "Kindly login or create account to Enrol to course",
           variant: "destructive",
         });
       }
@@ -115,7 +121,7 @@ export default function CoursesPage() {
       if (!response.ok && response.status !== 402 && response.status !== 401) {
         toast({
           title: "Action Failed",
-          description: "Failed to rsvp for event",
+          description: "Failed to Enrol for course",
           variant: "destructive",
         });
       }
@@ -141,7 +147,7 @@ export default function CoursesPage() {
 
   return (
     <div className="container mx-auto py-12">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-8 mx-2">
         <h1 className="text-4xl font-bold">Available Courses</h1>
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="w-[180px]">
@@ -157,7 +163,7 @@ export default function CoursesPage() {
         </Select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-2">
 
         {loading && (
           <>
