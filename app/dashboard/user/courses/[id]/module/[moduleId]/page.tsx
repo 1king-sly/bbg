@@ -70,7 +70,6 @@ export default function ModulePage() {
 
 
   const handleQuizComplete = (score: number) => {
-    // Save progress to backend
     toast({
       title: "Module Completed",
       description: `You scored ${score}% on the quiz!`,

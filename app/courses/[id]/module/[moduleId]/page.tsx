@@ -57,7 +57,7 @@ export default function ModulePage() {
         setModule(data);
       }
     } catch (error) {
-      console.error("Failed to fetch User course", error);
+      console.error("Failed to fetch module", error);
     }
 
     setIsLoading(false);

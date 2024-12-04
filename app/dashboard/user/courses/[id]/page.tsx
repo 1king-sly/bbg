@@ -78,7 +78,6 @@ const params = useParams()
       });
 
       const data = await response.json();
-      console.log(data)
       if (response.ok) {
         setCourse(data);
       }
