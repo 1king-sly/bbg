@@ -15,6 +15,7 @@ interface Question {
 }
 
 interface QuizModuleProps {
+  moduleId: number;
   questions: Question[];
   onComplete: (score: number) => void;
 }
