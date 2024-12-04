@@ -15,12 +15,11 @@ interface Question {
 }
 
 interface QuizModuleProps {
-  moduleId: string;
   questions: Question[];
   onComplete: (score: number) => void;
 }
 
-export default function QuizModule({ moduleId, questions, onComplete }: QuizModuleProps) {
+export default function QuizModule({  questions, onComplete }: QuizModuleProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [testScore, setTestScore] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);

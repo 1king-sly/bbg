@@ -123,7 +123,6 @@ export default function ModulePage() {
         </>
       ) : (
         <QuizModule
-          moduleId={module.id}
           questions={module.Quiz.questions}
           onComplete={handleQuizComplete}
         />
