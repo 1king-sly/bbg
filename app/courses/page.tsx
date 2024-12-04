@@ -94,6 +94,7 @@ export default function CoursesPage() {
       });
 
       const data = await response.json()
+      
 
 
       if (response.ok) {
