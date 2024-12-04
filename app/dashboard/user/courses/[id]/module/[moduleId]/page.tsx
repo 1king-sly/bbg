@@ -13,7 +13,7 @@ interface Module {
   title: string;
   content: string;
   videoUrl?: string;
-  quiz: {
+  Quiz: {
     questions: {
       id: number;
       question: string;
@@ -23,53 +23,51 @@ interface Module {
   };
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+
+
 export default function ModulePage() {
 
     const params = useParams()
 
-    const {id, moduleId} = params
+   
 
 
   const { toast } = useToast();
   const [module, setModule] = useState<Module | null>(null);
   const [showQuiz, setShowQuiz] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [loading, setIsLoading] = useState(true);
+
+
+  const fetchModule = async () => {
+    const access_token = localStorage.getItem("accessToken");
+    try {
+      const response = await fetch(`${API_URL}/courses/modules/${params.moduleId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setModule(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch User course", error);
+    }
+
+    setIsLoading(false);
+  };
 
   useEffect(() => {
+    fetchModule();
+  }, []);
 
-    setModule({
-      id: 1,
-      title: "Introduction to Programming",
-      content: "Learn the basics of programming concepts...",
-      videoUrl: "https://www.youtube.com/embed/example",
-      quiz: {
-        questions: [
-          {
-            id: 1,
-            question: "What is a variable?",
-            options: [
-              "A container for storing data",
-              "A mathematical equation",
-              "A programming language",
-              "A type of loop"
-            ],
-            correctAnswer: 0
-          },
-          {
-            id: 2,
-            question: "What is a function?",
-            options: [
-              "A type of variable",
-              "A reusable block of code",
-              "A data type",
-              "A loop construct"
-            ],
-            correctAnswer: 1
-          }
-        ]
-      }
-    });
-  }, [moduleId]);
+
 
   const handleQuizComplete = (score: number) => {
     // Save progress to backend
@@ -106,8 +104,9 @@ export default function ModulePage() {
                 <Card>
                   <CardContent className="aspect-video mt-6">
                     <iframe
-                    title="module video url"
-                      src={module.videoUrl}
+                    title={`${module.title} Video Content`}
+                    src={`https://www.youtube.com/embed/${new URL(module.videoUrl).searchParams.get('v')}`}
+                    loading="lazy"
                       className="w-full h-full"
                       allowFullScreen
                     />
@@ -124,8 +123,8 @@ export default function ModulePage() {
         </>
       ) : (
         <QuizModule
-          moduleId={parseInt(moduleId.toString())}
-          questions={module.quiz.questions}
+          moduleId={module.id}
+          questions={module.Quiz.questions}
           onComplete={handleQuizComplete}
         />
       )}

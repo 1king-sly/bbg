@@ -11,9 +11,23 @@ import { useParams } from 'next/navigation';
 interface Module {
   id: number;
   title: string;
-  isLocked: boolean;
-  isCompleted: boolean;
-  progress: number;
+  content: string;
+  videoUrl?: string;
+  Quiz: {
+    questions: {
+      id: number;
+      question: string;
+      options: string[];
+      correctAnswer: number;
+    }[];
+  };
+  ModuleProgress:[{
+    isCompleted:boolean,
+    isLocked:boolean,
+    lastAccessed:Date,
+    modulId:string
+
+  }]
 }
 
 interface Course {
@@ -22,54 +36,72 @@ interface Course {
   description: string;
   category: string;
   modules: Module[];
+  partner:{
+    name:string
+  }
+  expert:{
+    name:string
+  }
+  organization:{
+    name:string
+  }
+  enrollments: [
+    {
+      status:string
+    }
+  ];
+  maxEnrollments: number;
+  completionRate: number;
 }
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 
 export default function CoursePage() {
 
 const params = useParams()
   const [course, setCourse] = useState<Course | null>(null);
+  const [loading, setIsLoading] = useState(true);
+
+
+
+  
+  const fetchCourses = async () => {
+    const access_token = localStorage.getItem("accessToken");
+    try {
+      const response = await fetch(`${API_URL}/courses/${params.id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      const data = await response.json();
+      console.log(data)
+      if (response.ok) {
+        setCourse(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch User course", error);
+    }
+
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    // Fetch course data
-    // This is dummy data for demonstration
-    setCourse({
-      id: 1,
-      title: "Introduction to Programming",
-      description: "Learn the fundamentals of programming",
-      category: "Technology",
-      modules: [
-        {
-          id: 1,
-          title: "Getting Started with Programming",
-          isLocked: false,
-          isCompleted: true,
-          progress: 100
-        },
-        {
-          id: 2,
-          title: "Variables and Data Types",
-          isLocked: false,
-          isCompleted: false,
-          progress: 0
-        },
-        {
-          id: 3,
-          title: "Control Structures",
-          isLocked: true,
-          isCompleted: false,
-          progress: 0
-        }
-      ]
-    });
-  }, [params.id]);
+    fetchCourses();
+  }, []);
+
+  
 
   if (!course) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="container mx-auto py-12">
-      <div className="mb-8">
+    <div className="container mx-auto py-12 ">
+      <div className="mb-8 mx-3">
         <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
         <p className="text-lg text-muted-foreground mb-2">{course.description}</p>
         <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
@@ -77,15 +109,15 @@ const params = useParams()
         </span>
       </div>
 
-      <div className="grid gap-6">
-        {course.modules.map((module) => (
-          <Card key={module.id} className={module.isLocked ? 'opacity-75' : ''}>
+      <div className="grid gap-6 mx-3">
+        {course.modules.map((module,index) => (
+          <Card key={module.id} className={module.ModuleProgress[index]?.isLocked ? 'opacity-75' : ''}>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>{module.title}</span>
-                {module.isLocked ? (
+                {module.ModuleProgress[index]?.isLocked ? (
                   <Lock className="h-5 w-5 text-muted-foreground" />
-                ) : module.isCompleted ? (
+                ) : module.ModuleProgress[index]?.isCompleted ? (
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 ) : (
                   <Unlock className="h-5 w-5 text-primary" />
@@ -97,14 +129,14 @@ const params = useParams()
                 <div>
                   <div className="flex justify-between mb-2 ">
                     <span className="text-sm text-muted-foreground">Progress</span>
-                    <span className="text-sm font-medium">{module.progress}%</span>
+                    <span className="text-sm font-medium">{module.ModuleProgress.length}%</span>
                   </div>
-                  <Progress value={module.progress} />
+                  <Progress value={module.ModuleProgress.length} />
                 </div>
-                {!module.isLocked && (
+                {!module.ModuleProgress[index]?.isLocked && (
                   <Link href={`/dashboard/user/courses/${course.id}/module/${module.id}`}>
                     <Button className="w-full">
-                      {module.isCompleted ? 'Review Module' : 'Start Module'}
+                      {module.ModuleProgress[index]?.isCompleted ? 'Review Module' : 'Start Module'}
                     </Button>
                   </Link>
                 )}
