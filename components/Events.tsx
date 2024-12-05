@@ -15,6 +15,8 @@ import {
 import { Calendar, MapPin, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import SkeletonCard from "./skeleton/SkeletonCard";
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -33,6 +35,8 @@ const Events = () => {
   const [dateFilter, setDateFilter] = useState("");
   const [countyFilter, setCountyFilter] = useState("");
   const [disabled, setDisabled] = useState(false);
+  const [loading, setIsLoading] = useState(true);
+
 
   const { toast } = useToast();
 
@@ -66,6 +70,8 @@ const Events = () => {
       } catch (error) {
         console.error("Failed to fetch Events", error);
       }
+      setIsLoading(false);
+
     };
     fetchEvents();
   }, []);
@@ -153,6 +159,16 @@ const Events = () => {
           <Button onClick={handleFilter}>Filter</Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+          
+        {loading && (
+          <>
+                  {[...Array(6)].map((_, index) => (
+          <SkeletonCard key={index} />
+        ))}
+
+          </>
+        )}
           {filteredEvents?.slice(0, 6).map((event, index) => (
             <Card key={index}>
               <CardHeader>

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -31,6 +32,8 @@ export default function EventsPage() {
   const [dateFilter, setDateFilter] = useState("");
   const [countyFilter, setCountyFilter] = useState("");
   const [disabled, setDisabled] = useState(false);
+
+  const today = new Date();
 
   const { toast } = useToast();
 
@@ -118,7 +121,7 @@ export default function EventsPage() {
   };
   return (
     <div className="container mx-auto py-12">
-      <h1 className="text-4xl font-bold mb-8">Upcoming Events</h1>
+      <h1 className="text-4xl font-bold mb-8">All Events</h1>
       <div className="flex flex-wrap gap-4 mb-8">
         <Input
           type="date"
@@ -159,14 +162,26 @@ export default function EventsPage() {
                 <Users className="h-4 w-4 mr-2" />
                 {event.attendees.length || 0}/{event.maxAttendees} Attendees
               </div>
-              <div className="w-full flex justify-end mt-2">
-                <Button
-                  type="submit"
-                  onClick={() => rsvp(event.id)}
-                  disabled={disabled}>
-                  RSVP
-                </Button>
-              </div>
+
+              {today.toDateString() === new Date(event.date).toDateString() ||
+                (today < new Date(event.date) && (
+                  <div className="w-full flex justify-end mt-2">
+                    <Button
+                      type="submit"
+                      onClick={() => rsvp(event.id)}
+                      disabled={disabled}>
+                      RSVP
+                    </Button>
+                  </div>
+                ))}
+
+              {today > new Date(event.date) && (
+                <div className="w-full flex justify-end mt-2">
+                  <Link href={`/events/${event.id}`}>
+                    <Button>View Event</Button>
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}

@@ -5,6 +5,7 @@ import Objectives from '@/components/Objectives';
 import Partners from '@/components/Partners';
 import Mission from '@/components/Mission';
 import Events from '@/components/Events';
+import Courses from '@/components/Courses';
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <Partners />
       <Mission />
       <Events />
+      <Courses/>
     </div>
   );
 }

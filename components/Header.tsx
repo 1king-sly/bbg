@@ -71,18 +71,6 @@ const Header = () => {
 
   }
 
-  const isLoggedIn = pathname.startsWith('/dashboard')
-  let dashboardLink = '/dashboard'
-
-  if (pathname.includes('/gal')) {
-    dashboardLink = '/dashboard/gal'
-  } else if (pathname.includes('/partner')) {
-    dashboardLink = '/dashboard/partner'
-  } else if (pathname.includes('/organization')) {
-    dashboardLink = '/dashboard/organization'
-  } else if (pathname.includes('/admin')) {
-    dashboardLink = '/dashboard/admin'
-  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 mx-auto px-5">
@@ -117,8 +105,8 @@ const Header = () => {
           <SheetContent>
             <div className="flex flex-col h-full">
               <nav className="flex flex-col h-full items-center justify-center w-full gap-3">
-              <Link href="/about">About</Link>
-            <Link href="/services">Services</Link>
+              <Link href="/courses">Courses</Link>
+              <Link href="/services">Services</Link>
             <Link href="/events">Events</Link>
             <Link href="/organizations">Organizations</Link>
             <Link href="/contact">Contact</Link>

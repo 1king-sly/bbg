@@ -1,6 +1,6 @@
 "use client";
 
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +21,6 @@ import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-
-
 interface Module {
   id: number;
   title: string;
@@ -36,13 +34,14 @@ interface Module {
       correctAnswer: number;
     }[];
   };
-  ModuleProgress:[{
-    isCompleted:boolean,
-    isLocked:boolean,
-    lastAccessed:Date,
-    modulId:string
-
-  }]
+  ModuleProgress: [
+    {
+      isCompleted: boolean;
+      isLocked: boolean;
+      lastAccessed: Date;
+      modulId: string;
+    }
+  ];
 }
 
 interface Course {
@@ -51,27 +50,23 @@ interface Course {
   description: string;
   category: string;
   modules: Module[];
-  partner:{
-    name:string
-  }
-  expert:{
-    name:string
-  }
-  organization:{
-    name:string
-  }
+  partner: {
+    name: string;
+  };
+  expert: {
+    name: string;
+  };
+  organization: {
+    name: string;
+  };
   enrollments: [
     {
-      status:string
+      status: string;
     }
   ];
   maxEnrollments: number;
   completionRate: number;
 }
-
-
-
-
 
 export default function AdminCourses() {
   const { toast } = useToast();
@@ -79,10 +74,6 @@ export default function AdminCourses() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setIsLoading] = useState(true);
 
-
-
-
-  
   const access_token = localStorage.getItem("accessToken");
 
   const fetchCourses = async () => {
@@ -110,7 +101,6 @@ export default function AdminCourses() {
     fetchCourses();
   }, []);
 
- 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "in_progress":
@@ -124,9 +114,10 @@ export default function AdminCourses() {
     }
   };
 
-  const filteredCourses = courses.filter(course =>
-    course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    course.category.toLowerCase().includes(searchTerm.toLowerCase()) 
+  const filteredCourses = courses.filter(
+    (course) =>
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -141,7 +132,6 @@ export default function AdminCourses() {
             className="pl-8"
           />
         </div>
-
       </div>
 
       <Card>
@@ -161,16 +151,20 @@ export default function AdminCourses() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredCourses.map((course,index) => (
+              {filteredCourses.map((course, index) => (
                 <TableRow key={course.id}>
                   <TableCell>
                     <div>
                       <p className="font-medium">{course.title}</p>
-                      <p className="text-sm text-muted-foreground">{course.description}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {course.description}
+                      </p>
                       <div className="mt-2">
-                        <p className="text-sm font-medium">Modules ({course.modules.length})</p>
+                        <p className="text-sm font-medium">
+                          Modules ({course.modules.length})
+                        </p>
                         <ul className="text-sm text-muted-foreground">
-                          {course.modules.slice(0,3).map((module) => (
+                          {course.modules.slice(0, 3).map((module) => (
                             <li key={module.id}>{module.title}</li>
                           ))}
                         </ul>
@@ -183,13 +177,26 @@ export default function AdminCourses() {
                   <TableCell>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm">Progress: {(course.modules[index].ModuleProgress?.filter((progress)=>progress.isCompleted)?.length / course.modules[index].ModuleProgress?.length) * 100 || 0} %</span>
+                        <span className="text-sm">
+                          Progress:{" "}
+                          {(course.modules[index].ModuleProgress?.filter(
+                            (progress) => progress.isCompleted
+                          )?.length /
+                            course.modules[index].ModuleProgress?.length) *
+                            100 || 0}{" "}
+                          %
+                        </span>
                       </div>
 
-                      <Progress value={(course.modules[index].ModuleProgress?.filter((progress)=>progress.isCompleted)?.length / course.modules[index].ModuleProgress?.length) * 100 || 0} />
-                    
- 
-                     
+                      <Progress
+                        value={
+                          (course.modules[index].ModuleProgress?.filter(
+                            (progress) => progress.isCompleted
+                          )?.length /
+                            course.modules[index].ModuleProgress?.length) *
+                            100 || 0
+                        }
+                      />
                     </div>
                   </TableCell>
                   <TableCell>
@@ -198,10 +205,14 @@ export default function AdminCourses() {
                         <p className="text-sm">Expert: {course.expert.name}</p>
                       )}
                       {course.partner && (
-                        <p className="text-sm">Partner: {course.partner.name}</p>
+                        <p className="text-sm">
+                          Partner: {course.partner.name}
+                        </p>
                       )}
-                      {course.organization&& (
-                        <p className="text-sm">Org: {course.organization.name}</p>
+                      {course.organization && (
+                        <p className="text-sm">
+                          Org: {course.organization.name}
+                        </p>
                       )}
                     </div>
                   </TableCell>
@@ -210,11 +221,9 @@ export default function AdminCourses() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-
-                    <Link href={`/dashboard/user/courses/${course.id}`}>
-              <Button>View Course</Button>
-            </Link>
-
+                      <Link href={`/dashboard/user/courses/${course.id}`}>
+                        <Button>View Course</Button>
+                      </Link>
                     </div>
                   </TableCell>
                 </TableRow>
