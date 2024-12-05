@@ -87,9 +87,9 @@ export default function ModulePage() {
         <>
           <h1 className="text-3xl font-bold mb-8">{module.title}</h1>
           <Tabs defaultValue="content">
-            <TabsList>
-              <TabsTrigger value="content">Written Content</TabsTrigger>
-              {module.videoUrl && <TabsTrigger value="video">Video</TabsTrigger>}
+            <TabsList className='w-full flex flex-row justify-between'>
+              <TabsTrigger className='w-1/2' value="content">Written Content</TabsTrigger>
+              {module.videoUrl && <TabsTrigger className='w-1/2' value="video">Video</TabsTrigger>}
             </TabsList>
             <TabsContent value="content">
               <Card>
