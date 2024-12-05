@@ -307,7 +307,7 @@ export default function ExpertCourses() {
               Create Course
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingCourse ? "Edit Course" : "Create New Course"}
@@ -537,7 +537,7 @@ export default function ExpertCourses() {
                 <span>{course.title}</span>
                 <div className="flex gap-2">
                   <Button
-                    disabled={disabled}
+                    disabled={true}
                     variant="ghost"
                     size="icon"
                     onClick={() => {
@@ -555,7 +555,7 @@ export default function ExpertCourses() {
                     <Pencil className="h-4 w-4" />
                   </Button>
                   <Button
-                    disabled={disabled}
+                    disabled={true}
                     variant="ghost"
                     size="icon"
                     onClick={() => {
@@ -592,19 +592,9 @@ export default function ExpertCourses() {
                       {course.enrollments.length} People
                     </span>
                   </div>
-                  <Progress
-                    value={
-                      (course.enrollments.length / course.maxEnrollments) * 100
-                    }
-                  />
+
                 </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium">Completion Rate</span>
-                    <span className="text-sm">{course.completionRate}%</span>
-                  </div>
-                  <Progress value={course.completionRate} />
-                </div>
+
               </div>
             </CardContent>
           </Card>
