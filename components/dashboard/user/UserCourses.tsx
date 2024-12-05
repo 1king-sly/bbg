@@ -36,6 +36,13 @@ interface Module {
       correctAnswer: number;
     }[];
   };
+  ModuleProgress:[{
+    isCompleted:boolean,
+    isLocked:boolean,
+    lastAccessed:Date,
+    modulId:string
+
+  }]
 }
 
 interface Course {
@@ -70,8 +77,6 @@ export default function AdminCourses() {
   const { toast } = useToast();
   const [courses, setCourses] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [loading, setIsLoading] = useState(true);
 
 
@@ -165,7 +170,7 @@ export default function AdminCourses() {
                       <div className="mt-2">
                         <p className="text-sm font-medium">Modules ({course.modules.length})</p>
                         <ul className="text-sm text-muted-foreground">
-                          {course.modules.map((module) => (
+                          {course.modules.slice(0,3).map((module) => (
                             <li key={module.id}>{module.title}</li>
                           ))}
                         </ul>
@@ -178,8 +183,10 @@ export default function AdminCourses() {
                   <TableCell>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm">Enrollment: {course.enrollments.length}</span>
+                        <span className="text-sm">Progress: {(course.modules[index].ModuleProgress?.filter((progress)=>progress.isCompleted)?.length / course.modules[index].ModuleProgress?.length) * 100 || 0} %</span>
                       </div>
+
+                      <Progress value={(course.modules[index].ModuleProgress?.filter((progress)=>progress.isCompleted)?.length / course.modules[index].ModuleProgress?.length) * 100 || 0} />
                     
  
                      

@@ -95,7 +95,7 @@ const Header = () => {
             </span>
           </Link>
           <nav className="items-center space-x-6 text-sm font-medium hidden md:block">
-            <Link href="/about">About</Link>
+            <Link href="/courses">Courses</Link>
             <Link href="/services">Services</Link>
             <Link href="/events">Events</Link>
             <Link href="/organizations">Organizations</Link>

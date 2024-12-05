@@ -109,7 +109,7 @@ export default function CoursesPage() {
       if (response.status === 402) {
         toast({
           title: "Action Failed",
-          description: "You already Enrolled for course",
+          description: "You already Enrolled for course, Go to dashboard to access your courses",
           variant: "destructive",
         });
       }

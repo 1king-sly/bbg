@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Lock, Unlock, CheckCircle } from "lucide-react";
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import SkeletonCard from '@/components/skeleton/SkeletonCard';
 
 interface Module {
   id: number;
@@ -94,8 +95,21 @@ const params = useParams()
 
   
 
-  if (!course) {
-    return <div>Loading...</div>;
+  if (loading) {
+    return  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-2 py-12">
+
+<>
+                  {[...Array(6)].map((_, index) => (
+          <SkeletonCard key={index} />
+        ))}
+
+          </>
+
+    </div>;
+  }
+
+  if(!course){
+    return null
   }
 
   return (
@@ -108,7 +122,7 @@ const params = useParams()
         </span>
       </div>
 
-      <div className="grid gap-6 mx-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-3">
         {course.modules.map((module,index) => (
           <Card key={module.id} className={module.ModuleProgress[index]?.isLocked ? 'opacity-75' : ''}>
             <CardHeader>
@@ -125,13 +139,13 @@ const params = useParams()
             </CardHeader>
             <CardContent>
               <div className="space-y-4 flex flex-col gap-2 ">
-                <div>
+                {/* <div>
                   <div className="flex justify-between mb-2 ">
                     <span className="text-sm text-muted-foreground">Progress</span>
                     <span className="text-sm font-medium">{module.ModuleProgress.length}%</span>
                   </div>
                   <Progress value={module.ModuleProgress.length} />
-                </div>
+                </div> */}
                 {!module.ModuleProgress[index]?.isLocked && (
                   <Link href={`/dashboard/user/courses/${course.id}/module/${module.id}`}>
                     <Button className="w-full">
