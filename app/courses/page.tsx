@@ -92,17 +92,10 @@ export default function CoursesPage() {
           Authorization: `Bearer ${access_token}`,
         },
       });
-
-      const data = await response.json()
-
-      console.log(data)
-      
-
-
       if (response.ok) {
         toast({
           title: "Action Successful",
-          description: "Successfully enrolled for corse",
+          description: "Successfully enrolled for course, Go to dashboard to access",
         });
       }
 

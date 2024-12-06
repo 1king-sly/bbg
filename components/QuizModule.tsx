@@ -33,6 +33,8 @@ export default function QuizModule({moduleId,courseId, questions, onComplete }: 
   const [answers, setAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [currentIndex, setCurrentModuleIndex] = useState<number | null>(null);
+  const [nextModuleId, setNextModuleId] = useState<string | null>(null);
+  const [loading, setIsLoading] = useState(false);
 
 
   const { toast } = useToast();
@@ -58,12 +60,23 @@ export default function QuizModule({moduleId,courseId, questions, onComplete }: 
     }
   };
 
+  const handleNavigation = (index: number | null) => {
+    if (index !== null) {
+      const nextIndex = index + 1
+      sessionStorage.setItem("currentModuleIndex", nextIndex.toString());
+      setCurrentModuleIndex(nextIndex)
+
+    } else {
+      sessionStorage.removeItem("currentModuleIndex");
+    }
+  };
+
   const calculateResults =async () => {
     const correctAnswers = questions.filter((q, index) => q.correctAnswer === answers[index]).length;
     const score = (correctAnswers / questions.length) * 100;
-    setShowResults(true);
     setTestScore(score)
     
+    setIsLoading(true)
     if (score >= 70) {
 
       const access_token = localStorage.getItem("accessToken");
@@ -80,8 +93,13 @@ export default function QuizModule({moduleId,courseId, questions, onComplete }: 
         });
   
         const data = await response.json();
+        console.log(data)
+
         if (response.ok) {
-          console.log(data)
+
+          handleNavigation(currentIndex)
+
+          setNextModuleId(data.nextModule?.moduleId)
 
           toast({
             title: "Congratulations!",
@@ -91,15 +109,27 @@ export default function QuizModule({moduleId,courseId, questions, onComplete }: 
         }
       } catch (error) {
         console.error("Failed to update module progress ", error);
+        toast({
+          title: "Something went wrong",
+          description: `Try re-submitting.`,
+          variant: "destructive",
+        });
+
+        setShowResults(true);
+
       }
 
     } else {
+      setShowResults(true);
+
       toast({
         title: "Try Again",
         description: `You scored ${score}%. You need 70% to pass.`,
         variant: "destructive",
       });
     }
+
+    setIsLoading(false)
   };
 
 
@@ -116,8 +146,8 @@ export default function QuizModule({moduleId,courseId, questions, onComplete }: 
           </p>
 
           {testScore > 70  ?(
-            currentIndex ?(
-              <Link href={`/dashboard/user/courses/${courseId}/module/${currentIndex}`}>
+            nextModuleId ?(
+              <Link href={`/dashboard/user/courses/${courseId}/module/${nextModuleId}`}>
                             <Button onClick={() => {
                 setShowResults(false);
                 setCurrentQuestion(0);
@@ -179,7 +209,7 @@ export default function QuizModule({moduleId,courseId, questions, onComplete }: 
         <Button
           onClick={handleNext}
           className="mt-4"
-          disabled={answers[currentQuestion] === undefined}
+          disabled={loading}
         >
           {currentQuestion === questions.length - 1 ? 'Finish' : 'Next'}
         </Button>

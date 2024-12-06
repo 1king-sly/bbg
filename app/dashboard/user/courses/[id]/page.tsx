@@ -132,13 +132,13 @@ const params = useParams()
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-3">
         {course.modules.map((module,index) => (
-          <Card key={module.id} className={module.ModuleProgress[index]?.isLocked ? 'opacity-75' : ''}>
+          <Card key={module.id} className={module.ModuleProgress[0]?.isLocked ? 'opacity-75' : ''}>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>{module.title}</span>
-                {module.ModuleProgress[index]?.isLocked ? (
+                {module.ModuleProgress[0]?.isLocked ? (
                   <Lock className="h-5 w-5 text-muted-foreground" />
-                ) : module.ModuleProgress[index]?.isCompleted ? (
+                ) : module.ModuleProgress[0]?.isCompleted ? (
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 ) : (
                   <Unlock className="h-5 w-5 text-primary" />
@@ -147,18 +147,12 @@ const params = useParams()
             </CardHeader>
             <CardContent>
               <div className="space-y-4 flex flex-col gap-2 ">
-                {/* <div>
-                  <div className="flex justify-between mb-2 ">
-                    <span className="text-sm text-muted-foreground">Progress</span>
-                    <span className="text-sm font-medium">{module.ModuleProgress.length}%</span>
-                  </div>
-                  <Progress value={module.ModuleProgress.length} />
-                </div> */}
-                {!module.ModuleProgress[index]?.isLocked && (
+ 
+                {!module.ModuleProgress[0]?.isLocked && (
                   <Link    href={`/dashboard/user/courses/${course.id}/module/${module.id}`} onClick={() => handleNavigation(index)}
                >
                     <Button className="w-full">
-                      {module.ModuleProgress[index]?.isCompleted ? 'Review Module' : 'Start Module'}
+                      {module.ModuleProgress[0]?.isCompleted ? 'Review Module' : 'Start Module'}
                     </Button>
                   </Link>
                 )}
