@@ -182,7 +182,7 @@ export default function AdminCourses() {
                           {(course.modules[index].ModuleProgress?.filter(
                             (progress) => progress.isCompleted
                           )?.length /
-                            course.modules[index].ModuleProgress?.length) *
+                            course.modules.length) *
                             100 || 0}{" "}
                           %
                         </span>
@@ -193,7 +193,7 @@ export default function AdminCourses() {
                           (course.modules[index].ModuleProgress?.filter(
                             (progress) => progress.isCompleted
                           )?.length /
-                            course.modules[index].ModuleProgress?.length) *
+                            course.modules.length) *
                             100 || 0
                         }
                       />
