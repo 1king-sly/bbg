@@ -10,7 +10,7 @@ import { useParams } from 'next/navigation';
 import SkeletonCard from '@/components/skeleton/SkeletonCard';
 
 interface Module {
-  id: number;
+  id: string;
   title: string;
   content: string;
   videoUrl?: string;
@@ -67,7 +67,7 @@ const params = useParams()
 
 
   
-  const fetchCourses = async () => {
+  const fetchCourse = async () => {
     const access_token = localStorage.getItem("accessToken");
     try {
       const response = await fetch(`${API_URL}/courses/${params.id}`, {
@@ -90,9 +90,17 @@ const params = useParams()
   };
 
   useEffect(() => {
-    fetchCourses();
+    fetchCourse();
   }, []);
 
+
+  const handleNavigation = (index: number) => {
+    if (index !== null) {
+      sessionStorage.setItem("currentModuleIndex", index.toString());
+    } else {
+      sessionStorage.removeItem("currentModuleIndex");
+    }
+  };
   
 
   if (loading) {
@@ -147,7 +155,8 @@ const params = useParams()
                   <Progress value={module.ModuleProgress.length} />
                 </div> */}
                 {!module.ModuleProgress[index]?.isLocked && (
-                  <Link href={`/dashboard/user/courses/${course.id}/module/${module.id}`}>
+                  <Link    href={`/dashboard/user/courses/${course.id}/module/${module.id}`} onClick={() => handleNavigation(index)}
+               >
                     <Button className="w-full">
                       {module.ModuleProgress[index]?.isCompleted ? 'Review Module' : 'Start Module'}
                     </Button>

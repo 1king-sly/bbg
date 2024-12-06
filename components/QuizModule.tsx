@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
+
 
 interface Question {
   id: number;
@@ -15,18 +17,32 @@ interface Question {
 }
 
 interface QuizModuleProps {
-  moduleId: number;
+  moduleId: string;
   questions: Question[];
   onComplete: (score: number) => void;
+  courseId:string
 }
 
-export default function QuizModule({  questions, onComplete }: QuizModuleProps) {
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+
+
+export default function QuizModule({moduleId,courseId, questions, onComplete }: QuizModuleProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [testScore, setTestScore] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [currentIndex, setCurrentModuleIndex] = useState<number | null>(null);
+
 
   const { toast } = useToast();
+
+  useEffect(() => {
+    const currentModuleIndex = sessionStorage.getItem("currentModuleIndex");
+    if (currentModuleIndex) {
+      setCurrentModuleIndex(parseInt(currentModuleIndex));
+    }
+  }, []);
 
   const handleAnswer = (answer: number) => {
     const newAnswers = [...answers];
@@ -42,18 +58,41 @@ export default function QuizModule({  questions, onComplete }: QuizModuleProps) 
     }
   };
 
-  const calculateResults = () => {
+  const calculateResults =async () => {
     const correctAnswers = questions.filter((q, index) => q.correctAnswer === answers[index]).length;
     const score = (correctAnswers / questions.length) * 100;
     setShowResults(true);
     setTestScore(score)
     
     if (score >= 70) {
-      toast({
-        title: "Congratulations!",
-        description: `You passed with a score of ${score}%`,
-      });
-      onComplete(score);
+
+      const access_token = localStorage.getItem("accessToken");
+
+
+      try {
+        const response = await fetch(`${API_URL}/courses/modules/${moduleId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+          body:JSON.stringify({index:currentIndex})
+        });
+  
+        const data = await response.json();
+        if (response.ok) {
+          console.log(data)
+
+          toast({
+            title: "Congratulations!",
+            description: `You passed with a score of ${score}%`,
+          });
+          onComplete(score);
+        }
+      } catch (error) {
+        console.error("Failed to update module progress ", error);
+      }
+
     } else {
       toast({
         title: "Try Again",
@@ -62,6 +101,8 @@ export default function QuizModule({  questions, onComplete }: QuizModuleProps) 
       });
     }
   };
+
+
 
   if (showResults) {
     return (
@@ -74,14 +115,32 @@ export default function QuizModule({  questions, onComplete }: QuizModuleProps) 
             You got {questions.filter((q, index) => q.correctAnswer === answers[index]).length} out of {questions.length} questions correct.
           </p>
 
-          {testScore > 70 ?(
-                       <Button onClick={() => {
-                        setShowResults(false);
-                        setCurrentQuestion(0);
-                        setAnswers([]);
-                      }}>
-                        Next Module
-                      </Button>
+          {testScore > 70  ?(
+            currentIndex ?(
+              <Link href={`/dashboard/user/courses/${courseId}/module/${currentIndex}`}>
+                            <Button onClick={() => {
+                setShowResults(false);
+                setCurrentQuestion(0);
+                setAnswers([]);
+              }}>
+                Next Module
+              </Button>
+              </Link>
+
+            ):(
+
+              <Link href={`/dashboard/user/courses/${courseId}}`}>
+              <Button onClick={() => {
+  setShowResults(false);
+  setCurrentQuestion(0);
+  setAnswers([]);
+}}>
+  Go to Modules
+</Button>
+</Link>
+
+            )
+                      
           ):(
 
             <Button onClick={() => {

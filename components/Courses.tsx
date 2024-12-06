@@ -206,7 +206,7 @@ const Courses = () => {
         </div>
         {filteredCourses.length > 6 && (
           <div className="w-full flex justify-end mt-4">
-            <Link href="/events">
+            <Link href="/courses">
               <Button>More Courses</Button>
             </Link>
           </div>

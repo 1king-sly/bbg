@@ -9,7 +9,7 @@ import QuizModule from '@/components/QuizModule';
 import { useParams } from 'next/navigation';
 
 interface Module {
-  id: number;
+  id: string;
   title: string;
   content: string;
   videoUrl?: string;
@@ -31,6 +31,7 @@ export default function ModulePage() {
 
     const params = useParams()
 
+
    
 
 
@@ -39,6 +40,9 @@ export default function ModulePage() {
   const [showQuiz, setShowQuiz] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [loading, setIsLoading] = useState(true);
+  const [currentIndex, setCurrentModuleIndex] = useState<number | null>(null);
+  const [nextModuleId,setNextModuleId] = useState<string | null>(null)
+
 
 
   const fetchModule = async () => {
@@ -65,11 +69,18 @@ export default function ModulePage() {
 
   useEffect(() => {
     fetchModule();
+    const currentModuleIndex = sessionStorage.getItem("currentModuleIndex");
+    if (currentModuleIndex) {
+      setCurrentModuleIndex(parseInt(currentModuleIndex));
+    }
   }, []);
 
 
 
-  const handleQuizComplete = (score: number) => {
+  const handleQuizComplete =async (score: number) => {
+
+
+
     toast({
       title: "Module Completed",
       description: `You scored ${score}% on the quiz!`,
@@ -122,6 +133,7 @@ export default function ModulePage() {
         </>
       ) : (
         <QuizModule
+          courseId={params.id.toString()}
           moduleId={module.id}
           questions={module.Quiz.questions}
           onComplete={handleQuizComplete}
