@@ -93,13 +93,19 @@ export default function QuizModule({moduleId,courseId, questions, onComplete }: 
         });
   
         const data = await response.json();
-        console.log(data)
 
         if (response.ok) {
 
-          handleNavigation(currentIndex)
+          if(data.nextModule !== null){
 
-          setNextModuleId(data.nextModule?.moduleId)
+            handleNavigation(currentIndex)
+            setShowResults(true);
+
+
+          }
+
+
+          setNextModuleId(data.nextModule?.id)
 
           toast({
             title: "Congratulations!",
@@ -146,25 +152,17 @@ export default function QuizModule({moduleId,courseId, questions, onComplete }: 
           </p>
 
           {testScore > 70  ?(
-            nextModuleId ?(
+            currentIndex ?(
               <Link href={`/dashboard/user/courses/${courseId}/module/${nextModuleId}`}>
-                            <Button onClick={() => {
-                setShowResults(false);
-                setCurrentQuestion(0);
-                setAnswers([]);
-              }}>
+                            <Button>
                 Next Module
               </Button>
               </Link>
 
             ):(
 
-              <Link href={`/dashboard/user/courses/${courseId}}`}>
-              <Button onClick={() => {
-  setShowResults(false);
-  setCurrentQuestion(0);
-  setAnswers([]);
-}}>
+              <Link href={`/dashboard/user/courses/${courseId}`}>
+              <Button>
   Go to Modules
 </Button>
 </Link>
