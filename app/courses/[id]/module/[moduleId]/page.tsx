@@ -9,7 +9,7 @@ import QuizModule from '@/components/QuizModule';
 import { useParams } from 'next/navigation';
 
 interface Module {
-  id: number;
+  id: string;
   title: string;
   content: string;
   videoUrl?: string;
@@ -31,6 +31,7 @@ export default function ModulePage() {
 
     const params = useParams()
 
+
    
 
 
@@ -39,6 +40,9 @@ export default function ModulePage() {
   const [showQuiz, setShowQuiz] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [loading, setIsLoading] = useState(true);
+  const [currentIndex, setCurrentModuleIndex] = useState<number | null>(null);
+  const [nextModuleId,setNextModuleId] = useState<string | null>(null)
+
 
 
   const fetchModule = async () => {
@@ -57,7 +61,7 @@ export default function ModulePage() {
         setModule(data);
       }
     } catch (error) {
-      console.error("Failed to fetch module", error);
+      console.error("Failed to fetch User course", error);
     }
 
     setIsLoading(false);
@@ -65,12 +69,18 @@ export default function ModulePage() {
 
   useEffect(() => {
     fetchModule();
+    const currentModuleIndex = sessionStorage.getItem("currentModuleIndex");
+    if (currentModuleIndex) {
+      setCurrentModuleIndex(parseInt(currentModuleIndex));
+    }
   }, []);
 
 
 
-  const handleQuizComplete = (score: number) => {
-    // Save progress to backend
+  const handleQuizComplete =async (score: number) => {
+
+
+
     toast({
       title: "Module Completed",
       description: `You scored ${score}% on the quiz!`,
@@ -88,9 +98,9 @@ export default function ModulePage() {
         <>
           <h1 className="text-3xl font-bold mb-8">{module.title}</h1>
           <Tabs defaultValue="content">
-            <TabsList>
-              <TabsTrigger value="content">Written Content</TabsTrigger>
-              {module.videoUrl && <TabsTrigger value="video">Video</TabsTrigger>}
+            <TabsList className='w-full flex flex-row justify-between'>
+              <TabsTrigger className='w-1/2' value="content">Written Content</TabsTrigger>
+              {module.videoUrl && <TabsTrigger className='w-1/2' value="video">Video</TabsTrigger>}
             </TabsList>
             <TabsContent value="content">
               <Card>
@@ -123,6 +133,7 @@ export default function ModulePage() {
         </>
       ) : (
         <QuizModule
+          courseId={params.id.toString()}
           moduleId={module.id}
           questions={module.Quiz.questions}
           onComplete={handleQuizComplete}
