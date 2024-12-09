@@ -154,6 +154,9 @@ export default function ExpertEvents() {
         });
       }    
     }
+    else{
+
+    
   
 
       try {
@@ -217,6 +220,7 @@ export default function ExpertEvents() {
         });
       }    
     }
+  }
 
   const handleEdit = (event: any) => {
     setEditingEvent(event);

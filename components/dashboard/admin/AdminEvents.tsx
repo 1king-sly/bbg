@@ -154,9 +154,9 @@ export default function AdminEvents() {
         });
       }    
     }
-  
+    else{
 
-      try {
+          try {
 
         const newEvent = {
           id: events.length + 1,
@@ -215,7 +215,14 @@ export default function AdminEvents() {
           description: "Failed to create  event",
           variant: "destructive",
         });
-      }    
+      }   
+
+    }
+  
+
+
+
+   
     }
 
   const handleEdit = (event: any) => {

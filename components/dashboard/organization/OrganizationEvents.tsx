@@ -154,6 +154,9 @@ export default function OrganizationEvents() {
         });
       }    
     }
+    else{
+
+   
   
 
       try {
@@ -217,6 +220,7 @@ export default function OrganizationEvents() {
         });
       }    
     }
+  }
 
   const handleEdit = (event: any) => {
     setEditingEvent(event);

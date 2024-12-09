@@ -153,7 +153,9 @@ export default function PartnerEvents() {
           variant: "destructive",
         });
       }    
-    }
+    }else{
+
+   
   
 
       try {
@@ -216,7 +218,7 @@ export default function PartnerEvents() {
           variant: "destructive",
         });
       }    
-    }
+    }}
 
   const handleEdit = (event: any) => {
     setEditingEvent(event);
