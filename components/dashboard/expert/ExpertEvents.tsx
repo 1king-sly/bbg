@@ -90,6 +90,70 @@ export default function ExpertEvents() {
     const access_token = localStorage.getItem("accessToken");
 
     setDisabled(true)
+
+    if(editingEvent){
+
+      try {
+
+     
+
+        const response = await fetch(`${API_URL}/events/${editingEvent.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`,
+          },
+          body: JSON.stringify(eventForm),
+        });
+
+        const data = await response.json()
+
+
+
+        if (response.ok) {
+
+          setEvents((prev) =>
+            prev.map((event) =>
+              event.id === editingEvent.id ? { ...event, ...data } : event
+            )
+          );
+            toast({
+            title: "Action Successful",
+            description: "Event Successfully updated",
+          });
+          setIsDialogOpen(false);
+          setEditingEvent(null);
+          setEventForm({
+            title: "",
+            description: "",
+            date: "",
+            location: "",
+            maxAttendees: "",
+          });
+        }
+
+        if(!response.ok){
+          toast({
+            title: "Action Failed",
+            description: "Failed to update  event",
+            variant: "destructive",
+          });
+        }
+
+        setDisabled(false)
+
+       
+      } catch (error: any) {
+        console.error(error);
+        setDisabled(false)
+
+        toast({
+          title: "Action Failed",
+          description: "Failed to update  event",
+          variant: "destructive",
+        });
+      }    
+    }
   
 
       try {
@@ -159,8 +223,7 @@ export default function ExpertEvents() {
     setEventForm({
       title: event.title,
       description: event.description,
-      date: event.date,
-      location: event.location,
+      date: new Date(event.date).toISOString().split("T")[0],      location: event.location,
       maxAttendees: event.maxAttendees.toString(),
     });
     setIsDialogOpen(true);
