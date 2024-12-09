@@ -91,10 +91,6 @@ export default function OrganizationEvents() {
 
     setDisabled(true)
 
-
-  
-
-      
     if(editingEvent){
 
       try {
@@ -158,8 +154,7 @@ export default function OrganizationEvents() {
         });
       }    
     }
-        
-    }
+  
 
       try {
 
@@ -169,7 +164,6 @@ export default function OrganizationEvents() {
           attendees: 0,
           maxAttendees: parseInt(eventForm.maxAttendees),
         }
-
         const response = await fetch(`${API_URL}/events`, {
           method: "POST",
           headers: {
@@ -229,7 +223,8 @@ export default function OrganizationEvents() {
     setEventForm({
       title: event.title,
       description: event.description,
-      date: new Date(event.date).toISOString().split("T")[0],      location: event.location,
+      date: new Date(event.date).toISOString().split("T")[0],
+      location: event.location,
       maxAttendees: event.maxAttendees.toString(),
     });
     setIsDialogOpen(true);
@@ -341,7 +336,6 @@ const handleDelete =async (eventId: number) => {
                 <Input
                   type="date"
                   value={eventForm.date}
-                  min={new Date().toISOString().split("T")[0]}
                   onChange={(e) =>
                     setEventForm({ ...eventForm, date: e.target.value })
                   }
