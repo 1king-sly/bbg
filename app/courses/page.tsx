@@ -148,22 +148,24 @@ export default function CoursesPage() {
         <EmptyState message="More courses coming soon" />
       ) : (
         <>
-          <div className="flex justify-between items-center mb-8 mx-2">
-            <Select
-              value={selectedCategory}
-              onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {!loading && (
+            <div className="flex justify-between items-center mb-8 mx-2">
+              <Select
+                value={selectedCategory}
+                onValueChange={setSelectedCategory}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-2">
             {loading && (

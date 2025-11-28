@@ -137,26 +137,29 @@ export default function EventsPage() {
         <EmptyState message="We are planning more events, chillax" />
       ) : (
         <>
-          <div className="flex flex-wrap gap-4 mb-8">
-            <Input
-              type="date"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-              className="w-full sm:w-auto"
-            />
-            <Select value={countyFilter} onValueChange={setCountyFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Select county" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="NAIROBI">Nairobi</SelectItem>
-                <SelectItem value="MOMBASA">Mombasa</SelectItem>
-                <SelectItem value="KISUMU">Kisumu</SelectItem>
-                <SelectItem value="NAKURU">Nakuru</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={handleFilter}>Filter</Button>
-          </div>
+          {!loading && (
+            <div className="flex flex-wrap gap-4 mb-8">
+              <Input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="w-full sm:w-auto"
+              />
+              <Select value={countyFilter} onValueChange={setCountyFilter}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Select county" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="NAIROBI">Nairobi</SelectItem>
+                  <SelectItem value="MOMBASA">Mombasa</SelectItem>
+                  <SelectItem value="KISUMU">Kisumu</SelectItem>
+                  <SelectItem value="NAKURU">Nakuru</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={handleFilter}>Filter</Button>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredEvents.map((event, index) => (
               <Card key={index}>

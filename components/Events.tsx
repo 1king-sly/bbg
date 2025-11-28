@@ -147,26 +147,29 @@ const Events = () => {
         <EmptyState message="We are planning more events, chillax" />
       ) : (
         <div className="container">
-          <div className="flex flex-wrap gap-4 mb-8">
-            <Input
-              type="date"
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value)}
-              className="w-full sm:w-auto"
-            />
-            <Select value={countyFilter} onValueChange={setCountyFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Select county" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Nairobi">Nairobi</SelectItem>
-                <SelectItem value="Mombasa">Mombasa</SelectItem>
-                <SelectItem value="Kisumu">Kisumu</SelectItem>
-                <SelectItem value="Nakuru">Nakuru</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={handleFilter}>Filter</Button>
-          </div>
+          {!loading && (
+            <div className="flex flex-wrap gap-4 mb-8">
+              <Input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+                className="w-full sm:w-auto"
+              />
+              <Select value={countyFilter} onValueChange={setCountyFilter}>
+                <SelectTrigger className="w-full sm:w-[180px]">
+                  <SelectValue placeholder="Select county" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Nairobi">Nairobi</SelectItem>
+                  <SelectItem value="Mombasa">Mombasa</SelectItem>
+                  <SelectItem value="Kisumu">Kisumu</SelectItem>
+                  <SelectItem value="Nakuru">Nakuru</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button onClick={handleFilter}>Filter</Button>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {loading && (
               <>
