@@ -11,9 +11,9 @@ interface partner{
 const partners = [
   { name: "MMUST", logo: "/images/mmustLogo.jpg" },
   { name: "MMUST iHub", logo: "/images/mmustIhub.png" },
-  { name: "MMUST Guidance and Counselling", logo: "/images/mmustLogo.jpg" },
+  { name: "Guidance and Counselling", logo: "/images/mmustLogo.jpg" },
   { name: "MMUST Hospital", logo: "/images/mmustLogo.jpg" },
-  { name: "MMUST", logo: "/images/mmustLogo.jpg" },
+  { name: "MMUST School", logo: "/images/mmustLogo.jpg" },
   { name: "MMUST iHub", logo: "/images/mmustIhub.png" },
   { name: "MMUST Guidance and Counselling", logo: "/images/mmustLogo.jpg" },
   { name: "MMUST Hospital", logo: "/images/mmustLogo.jpg" },
@@ -62,17 +62,18 @@ const Partners = () => {
         <h2 className="text-3xl font-bold text-center mb-12">Our Partners</h2>
         <div className="flex justify-center items-center space-x-8">
           {currentPartners.map((partner, index) => (
-            <div
-              key={index}
-              className="md:w-40 md:h-40 w-60 h-60 flex items-center justify-center bg-white rounded-lg shadow-md transition-all duration-500"
-            >
-              <Image
-                src={partner.logo}
-                alt={partner.name}
-                width={120}
-                height={120}
-                objectFit="contain"
-              />
+            <div key={index} className="items-center flex gap-3 flex-col">
+              <div className="md:w-40 md:h-40 w-60 h-60 flex items-center justify-center bg-white rounded-lg shadow-md transition-all duration-500">
+                <Image
+                  src={partner.logo}
+                  alt={partner.name}
+                  width={120}
+                  height={120}
+                  objectFit="contain"
+                />
+              </div>
+
+              <p className="text-md text-primary">{partner.name} </p>
             </div>
           ))}
         </div>
