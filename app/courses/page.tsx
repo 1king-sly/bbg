@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Book, Code, LineChart } from "lucide-react";
 import SkeletonCard from '@/components/skeleton/SkeletonCard';
 import { useToast } from "@/hooks/use-toast";
+import EmptyState from '@/components/ui/Empty';
 
 
 interface Module {
@@ -143,55 +144,68 @@ export default function CoursesPage() {
 
   return (
     <div className="container mx-auto py-12">
-      <div className="flex justify-between items-center mb-8 mx-2">
-        <h1 className="text-4xl font-bold">Available Courses</h1>
-        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
-              </SelectItem>
+      <h1 className="text-4xl font-bold"> Courses</h1>
+      {courses.length == 0 ? (
+        <EmptyState message="More courses coming soon" />
+      ) : (
+        <>
+          <div className="flex justify-between items-center mb-8 mx-2">
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-2">
+            {loading && (
+              <>
+                {[...Array(6)].map((_, index) => (
+                  <SkeletonCard key={index} />
+                ))}
+              </>
+            )}
+            {filteredCourses.map((course) => (
+              <Card
+                key={course.id}
+                className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <Book className="h-6 w-6 text-primary" />
+                    <CardTitle>{course.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="mb-4">{course.description}</p>
+                  <div className="space-y-2">
+                    <p className="font-semibold">Modules:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      {course.modules.map((module, index) => (
+                        <li key={index}>{module.title}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <Button
+                    onClick={() => enrolCourse(course.id)}
+                    disabled={disabled}
+                    className="mt-4 w-full">
+                    Enroll Now
+                  </Button>
+                </CardContent>
+              </Card>
             ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-2">
-
-        {loading && (
-          <>
-                  {[...Array(6)].map((_, index) => (
-          <SkeletonCard key={index} />
-        ))}
-
-          </>
-        )}
-        {filteredCourses.map((course) => (
-          <Card key={course.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Book className="h-6 w-6 text-primary" />
-                <CardTitle>{course.title}</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4">{course.description}</p>
-              <div className="space-y-2">
-                <p className="font-semibold">Modules:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  {course.modules.map((module, index) => (
-                    <li key={index}>{module.title}</li>
-                  ))}
-                </ul>
-              </div>
-              <Button onClick={() => enrolCourse(course.id)} disabled={disabled} className="mt-4 w-full">Enroll Now</Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
