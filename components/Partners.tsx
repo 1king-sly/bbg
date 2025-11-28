@@ -9,18 +9,15 @@ interface partner{
 }
 
 const partners = [
-  { name: "UNICEF", logo: "/images/unicef.png" },
-  { name: "WHO", logo: "/images/who.png" },
-  { name: "Save the Children", logo: "/images/save-the-children.png" },
-  { name: "Girl Effect", logo: "/images/girl-effect.jpeg" },
-  { name: "UNICEF", logo: "/images/unicef.png" },
-  { name: "WHO", logo: "/images/who.png" },
-  { name: "Save the Children", logo: "/images/save-the-children.png" },
-  { name: "Girl Effect", logo: "/images/girl-effect.jpeg" },
-  { name: "UNICEF", logo: "/images/unicef.png" },
-  { name: "WHO", logo: "/images/who.png" },
-  { name: "Save the Children", logo: "/images/save-the-children.png" },
-  { name: "Girl Effect", logo: "/images/girl-effect.jpeg" },
+  { name: "MMUST", logo: "/images/mmustLogo.jpg" },
+  { name: "MMUST iHub", logo: "/images/mmustIhub.png" },
+  { name: "MMUST Guidance and Counselling", logo: "/images/mmustLogo.jpg" },
+  { name: "MMUST Hospital", logo: "/images/mmustLogo.jpg" },
+  { name: "MMUST", logo: "/images/mmustLogo.jpg" },
+  { name: "MMUST iHub", logo: "/images/mmustIhub.png" },
+  { name: "MMUST Guidance and Counselling", logo: "/images/mmustLogo.jpg" },
+  { name: "MMUST Hospital", logo: "/images/mmustLogo.jpg" },
+  
 ];
 
 
@@ -28,14 +25,14 @@ const Partners = () => {
   const [currentPartners, setCurrentPartners] = useState<partner[]>([]);
   const [visibleCount, setVisibleCount] = useState(4);
 
-  // Function to update the number of items based on screen size
+ 
   const updateVisibleCount = () => {
     if (window.innerWidth < 640) {
-      setVisibleCount(1); // Mobile screens
+      setVisibleCount(1); 
     } else if (window.innerWidth < 1024) {
-      setVisibleCount(2); // Tablet screens
+      setVisibleCount(2); 
     } else {
-      setVisibleCount(4); // Large screens
+      setVisibleCount(4); 
     }
   };
 

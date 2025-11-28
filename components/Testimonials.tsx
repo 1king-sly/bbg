@@ -7,22 +7,25 @@ import { Quote } from "lucide-react";
 
 const testimonials = [
   {
-    name: "Sarah Johnson",
+    name: "Mercyline Nyaboke",
     occupation: "University Student",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-    text: "BabyGal's support during my teenage years was invaluable. Their guidance helped me navigate challenges and pursue my dreams.",
+    image:
+      "https://media.licdn.com/dms/image/v2/D4D03AQH2-AITKrM9aQ/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1703816473262?e=1766016000&v=beta&t=UiWd7ploNUF5SgVlJhOEdP5g-WN1BidEZQ8F-ikM8Lg",
+    text: "BabyGal had invaluable impact to me as a young lady trying to figure out who I am in campus as I continue pursuing my dreams and goals .",
   },
   {
-    name: "Emily Rodriguez",
-    occupation: "Young Mother",
-    image: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-    text: "As a teen mom, BabyGal provided me with the resources and community I needed to care for my child while continuing my education.",
-  },
-  {
-    name: "Aisha Patel",
+    name: "Mercy Korir",
     occupation: "Software Engineer",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80",
-    text: "BabyGal's mentorship program opened doors for me in the tech industry. I'm grateful for their continuous support throughout my career.",
+    image:
+      "https://media.licdn.com/dms/image/v2/D5603AQEXh6nWeu5LUg/profile-displayphoto-crop_800_800/B56Zm67JtqI4AQ-/0/1759777694979?e=1766016000&v=beta&t=JWonS26LcubB-ZGq3kogoU82lLQDZd71_8039U1cfwY",
+    text: "BabyGal's mentorship program through MMUST iHub opened doors for me in the tech industry. I'm grateful for their continuous support throughout my career.",
+  },
+  {
+    name: "Marion Jairo",
+    occupation: "University Student",
+    image:
+      "https://media.licdn.com/dms/image/v2/D4D03AQHCQJHAS3y41g/profile-displayphoto-shrink_200_200/B4DZYQ9kXbGkAc-/0/1744041326648?e=1766016000&v=beta&t=lDYQ7jRIEvuH-fsMHn8OvfSzumpzS98R6uqK-H4WsTg",
+    text: "Finding a platform that enables we the ladies to speak freely, communicate and interact was difficult until I found about BabyGal",
   },
 ];
 
