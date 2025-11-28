@@ -55,6 +55,9 @@ const Events = () => {
     const fetchEvents = async () => {
       const access_token = localStorage.getItem("accessToken");
 
+            setIsLoading(true);
+
+
       try {
         const response = await fetch(`${API_URL}/events/upcoming`, {
           method: "GET",
@@ -72,8 +75,10 @@ const Events = () => {
         }
       } catch (error) {
         console.error("Failed to fetch Events", error);
+      }finally{
+
+        setIsLoading(false);
       }
-      setIsLoading(false);
 
     };
     fetchEvents();
@@ -138,7 +143,7 @@ const Events = () => {
   return (
     <section className="py-16">
       <h2 className="text-3xl font-bold  mb-12"> Events</h2>
-      {events.length == 0 ? (
+      {events.length == 0 && !loading ? (
         <EmptyState message="We are planning more events, chillax" />
       ) : (
         <div className="container">

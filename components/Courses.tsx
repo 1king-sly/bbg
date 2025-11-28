@@ -89,6 +89,8 @@ const Courses = () => {
   const enrolCourse = async (id: number) => {
     setDisabled(true);
     const access_token = localStorage.getItem("accessToken");
+          setIsLoading(true);
+
 
 
     try {
@@ -146,6 +148,9 @@ const Courses = () => {
       });
 
       setDisabled(false);
+    }finally{
+            setIsLoading(false);
+
     }
   };
   
@@ -157,7 +162,7 @@ const Courses = () => {
   return (
     <section className="py-4">
       <h1 className="text-4xl font-bold"> Courses</h1>
-      {courses.length == 0 ? (
+      {courses.length == 0  && !loading? (
         <EmptyState message="More courses coming soon" />
       ) : (
         <div className="container">

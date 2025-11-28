@@ -1,14 +1,19 @@
 "use client";
 
-import { useState,useEffect} from 'react';
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Book, Code, LineChart } from "lucide-react";
-import SkeletonCard from '@/components/skeleton/SkeletonCard';
+import SkeletonCard from "@/components/skeleton/SkeletonCard";
 import { useToast } from "@/hooks/use-toast";
-import EmptyState from '@/components/ui/Empty';
-
+import EmptyState from "@/components/ui/Empty";
 
 interface Module {
   id: number;
@@ -40,20 +45,12 @@ const categories = ["All", "IT", "Business", "Accounting"];
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-
-
-
-
 export default function CoursesPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setIsLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const { toast } = useToast();
-
-
-
-
 
   const fetchCourses = async () => {
     try {
@@ -79,11 +76,10 @@ export default function CoursesPage() {
     fetchCourses();
   }, []);
 
-
   const enrolCourse = async (id: number) => {
     setDisabled(true);
     const access_token = localStorage.getItem("accessToken");
-
+    setIsLoading(true);
 
     try {
       const response = await fetch(`${API_URL}/enrollments/courses/${id}`, {
@@ -96,14 +92,16 @@ export default function CoursesPage() {
       if (response.ok) {
         toast({
           title: "Action Successful",
-          description: "Successfully enrolled for course, Go to dashboard to access",
+          description:
+            "Successfully enrolled for course, Go to dashboard to access",
         });
       }
 
       if (response.status === 402) {
         toast({
           title: "Action Failed",
-          description: "You already Enrolled for course, Go to dashboard to access your courses",
+          description:
+            "You already Enrolled for course, Go to dashboard to access your courses",
           variant: "destructive",
         });
       }
@@ -133,19 +131,20 @@ export default function CoursesPage() {
       });
 
       setDisabled(false);
+    } finally {
+      setIsLoading(false);
     }
   };
-  
 
-  
-  const filteredCourses = selectedCategory === "All" 
-    ? courses 
-    : courses.filter(course => course.category === selectedCategory);
+  const filteredCourses =
+    selectedCategory === "All"
+      ? courses
+      : courses.filter((course) => course.category === selectedCategory);
 
   return (
     <div className="container mx-auto py-12">
       <h1 className="text-4xl font-bold"> Courses</h1>
-      {courses.length == 0 ? (
+      {courses.length == 0 && !loading ? (
         <EmptyState message="More courses coming soon" />
       ) : (
         <>

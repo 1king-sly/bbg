@@ -34,6 +34,8 @@ export default function EventsPage() {
   const [dateFilter, setDateFilter] = useState("");
   const [countyFilter, setCountyFilter] = useState("");
   const [disabled, setDisabled] = useState(false);
+    const [loading, setIsLoading] = useState(true);
+  
 
   const today = new Date();
 
@@ -52,6 +54,9 @@ export default function EventsPage() {
     const fetchEvents = async () => {
       const access_token = localStorage.getItem("accessToken");
 
+            setIsLoading(true);
+
+
       try {
         const response = await fetch(`${API_URL}/events/`, {
           method: "GET",
@@ -69,6 +74,9 @@ export default function EventsPage() {
         }
       } catch (error) {
         console.error("Failed to fetch Events", error);
+      }finally{
+              setIsLoading(false);
+
       }
     };
     fetchEvents();
@@ -125,7 +133,7 @@ export default function EventsPage() {
   return (
     <div className="container mx-auto py-12">
       <h1 className="text-4xl font-bold mb-8"> Events</h1>
-      {events.length == 0 ? (
+      {events.length == 0 && !loading ? (
         <EmptyState message="We are planning more events, chillax" />
       ) : (
         <>
