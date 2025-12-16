@@ -1,104 +1,47 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User } from "@/app/dashboard/user/hooks/useUser";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-interface User {
-  name: string;
-  email: string;
-  phone: string;
-  image: string;
-  hasChild: boolean;
-  isPregnant: boolean;
-  isMenstruating: boolean;
-  pregnancyDate?: string;
-  lastPeriodDate?: string;
-  cycleDays?: number;
-  childBirthDate?: string;
+interface UserProfileProps {
+  profile: User;
+  onProfileUpdate: (
+    profile: User
+  ) => Promise<{ success: boolean; data?: any; error?: string }>;
 }
 
-export default function ExpertProfile() {
+export default function UserProfile({
+  profile: initialProfile,
+  onProfileUpdate,
+}: UserProfileProps) {
   const { toast } = useToast();
-  const [profile, setProfile] = useState<User>({
-    name: "",
-    email: "",
-    phone: "",
-    image: "",
-    isPregnant: false,
-    isMenstruating: false,
-    hasChild: false,
-  });
-
+  const [profile, setProfile] = useState<User>(initialProfile);
   const [disabled, setDisabled] = useState(false);
 
-  const fetchUser = async () => {
-    const access_token = localStorage.getItem("accessToken");
-
-    try {
-      const response = await fetch(`${API_URL}/users/me`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setProfile(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch user", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setDisabled(true);
 
-    const access_token = localStorage.getItem("accessToken");
+    const result = await onProfileUpdate(profile);
 
-    try {
-      const response = await fetch(`${API_URL}/users/me`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
-        },
-        body: JSON.stringify(profile),
+    if (result.success) {
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been successfully updated.",
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setProfile(data);
-
-        toast({
-          title: "Profile Updated",
-          description: "Your profile has been successfully updated.",
-        });
-      } else {
-        toast({
-          title: "Failed to update profile",
-          description: "Your profile failed to update",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Failed to fetch user", error);
+    } else {
+      toast({
+        title: "Failed to update profile",
+        description: result.error || "Your profile failed to update",
+        variant: "destructive",
+      });
     }
 
     setDisabled(false);
@@ -114,6 +57,11 @@ export default function ExpertProfile() {
       hasChild: status === "hasChild",
     }));
   };
+  const toDateInputValue = (date?: string) => {
+    if (!date) return "";
+    return new Date(date).toISOString().split("T")[0];
+  };
+
 
   return (
     <Card>
@@ -166,14 +114,6 @@ export default function ExpertProfile() {
                     }
                   />
                 </div>
-
-                {/* <div>
-              <label className="text-sm font-medium">Field of Expertise</label>
-              <Input
-                value={profile.fieldOfExpertise}
-                onChange={(e) => setProfile({ ...profile, fieldOfExpertise: e.target.value })}
-              />
-            </div> */}
               </div>
 
               {/* Status Selection */}
@@ -220,7 +160,7 @@ export default function ExpertProfile() {
                     <Input
                       type="date"
                       max={new Date().toISOString().split("T")[0]}
-                      value={profile.pregnancyDate || ""}
+                      value={toDateInputValue(profile.pregnancyDate)}
                       onChange={(e) =>
                         setProfile({
                           ...profile,
@@ -238,7 +178,7 @@ export default function ExpertProfile() {
                       <Input
                         type="date"
                         max={new Date().toISOString().split("T")[0]}
-                        value={profile.lastPeriodDate || ""}
+                        value={toDateInputValue(profile.lastPeriodDate)}
                         onChange={(e) =>
                           setProfile({
                             ...profile,
@@ -280,14 +220,7 @@ export default function ExpertProfile() {
                   </div>
                 )}
               </div>
-              {/* <div>
-            <label className="text-sm font-medium">Bio</label>
-            <Textarea
-              value={profile.bio}
-              onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-              rows={4}
-            />
-          </div> */}
+
               <Button type="submit" disabled={disabled}>
                 Save Changes
               </Button>

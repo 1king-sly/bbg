@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import useUser from "@/app/dashboard/user/hooks/useUser";
 
 export function AuthModal({
   isOpen,
@@ -26,6 +27,7 @@ export function AuthModal({
   const [name, setName] = useState("");
   const { toast } = useToast();
   const [disabled, setDisabled] = useState(false);
+  const { fetchUser } = useUser();
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -64,6 +66,7 @@ export function AuthModal({
         });
         
         onClose();
+        fetchUser();
 
       }
 
